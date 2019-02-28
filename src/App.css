@@ -1,3 +1,4 @@
+/* CSS from React Creat App */
 .App {
   text-align: center;
 }
@@ -30,4 +31,26 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+ /* MY CSS */
+
+canvas {
+  display: block;
+  margin: auto;
+  border: 2px solid black;
+  background: black;
+}
+
+#playbutton {
+  /* width: 100px;
+  height: 100px; */
+  cursor: crosshair;
+  background-color: white;
+  display: block;
+  font-family: Arcade, ZCOOL QingKe HuangYou, Arial, sans-serif;
+  font-size: 40px;
+  padding: 5px 7px 2px;
+  margin: auto;
+  margin-top: 10px;
 }
