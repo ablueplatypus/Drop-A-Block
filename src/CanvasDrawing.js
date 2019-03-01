@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 // import InputManager from './InputManager'
 
 class CanvasDrawing extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.columns = 10
     this.rows = 20;
     this.board = [];
@@ -21,11 +21,15 @@ class CanvasDrawing extends Component {
         [1, 1, 1, 0,
          1],
 
-        [1, 1, 1, 0,
-         0, 0, 1],
+        [ 0, 0, 0, 0,
+          1, 1, 1, 0,
+          0, 0, 1, 0,
+          0, 0, 0, 0],
 
-        [1, 1, 0, 0,
-         1, 1],
+        [0, 0, 0, 0,
+         0, 1, 1, 0,
+         0, 1, 1, 0,
+         0, 0, 0, 0,],
 
         [1, 1, 0, 0,
          0, 1, 1],
@@ -41,27 +45,18 @@ class CanvasDrawing extends Component {
     ];
 
     this.randomPiece = [0,1,2,3,4,5,6]
+    console.log(this.props);
   } // end of contructor.
-  //Class for Tetromino
-  //Class contains:
-  ////-Type of Tetromino (maybe subclass)
-  ////-Position of tetromino
-  ////-Last time tetromino dropped
-  ////-Drop speed
-  ////-Update function
-  ////--Should modify all instance variables according to game logic
-  ////--Check the time since the last time the tetromino dropped, and if it's the right amount of time, drop the tetromino
-  ////--if (Date.now-this.lastdrop > this.speed)
-  ////-Render function
-  ////--Should render the instance on the canvas based on its current instance variables
 
   state = {
     worldWidth: 300,
     worldHeight: 600,
     startGame: false,
     context: null,
+    // selectedSound: 'place'
     // input: new InputManager(),
   }
+
 
   // key presses should update the state of context.
   //tetrominos will not need to be in state because they will not be based off react.
@@ -73,14 +68,8 @@ class CanvasDrawing extends Component {
     // this.state.input.bindKeys();
     const context = this.refs.canvas.getContext('2d')
     this.setState({context: context})
-    // console.log(this.state.pressedKeys);
-    // context.fillRect(0,0,this.state.worldWidth, this.state.worldHeight)
-    // context.fillStyle = 'cyan'
-    // context.fillRect(0,0,30,30)
-    // context.fillRect(32,0,30,30)
-    // context.fillRect(64,0,30,30)
-    // context.fillRect(96,0,30,30)
-    document.body.onkeydown = (e) => {
+
+    document.onkeydown = (e) => {
       let keys = {
           37: 'left',
           39: 'right',
@@ -108,18 +97,15 @@ class CanvasDrawing extends Component {
     // this.state.input.unbindKeys();
   }
 
-
-
   drawBlock = (x, y) => {
-    this.state.context.fillRect(30 * x, 30 * y, 30 - 1, 30 - 1)
-    this.state.context.strokeRect(30 * x, 30 * y, 30 - 1, 30 - 1)
+    this.state.context.fillRect(30 * x, 30 * y, 25, 25) // controls the postion (x,y) and the width and height of the tetrominos
+    this.state.context.strokeRect(30 * x, 30 * y, 30, 30)
   }
-
 
   renderWorld = () => {
     this.state.context.save()
     this.state.context.clearRect(0,0, 300, 600)
-    //
+
     this.state.context.strokeStyle = 'black'
     for (let x = 0; x < this.columns; ++x) {
       for (let y = 0; y < this.rows; ++y) {
@@ -250,6 +236,8 @@ class CanvasDrawing extends Component {
               this.board[curRow][x] = this.board[curRow - 1][x];
           }
         }
+          // put sound for line clear here!
+          this.props.lineClearSound()
           ++y;
       } // end of if rowFilled
     } // end of first for loop
@@ -332,10 +320,11 @@ class CanvasDrawing extends Component {
   startGame = () => {
     // this function start the game and allow the board to be created
     // it will also fire other funcations that will allow the tetrominos to start falling.
-    console.log('In Start Game', this.state.startGame);
+    // console.log('In Start Game', this.state.startGame);
     this.setState({
       startGame: true
     }/*,() => console.log(this.state)*/)
+
     this.intervalRender = setInterval(this.renderWorld, 30);
     this.clearBoard();
     this.newShape();
@@ -350,18 +339,27 @@ class CanvasDrawing extends Component {
   playGameHandler = () => {
     // console.log('in playGameHandler');
     this.startGame();
+    this.props.play()
     document.querySelector('#playbutton').disabled = true
   }
 
 /*********************************************************************/
+
+// <audio ref={(fall) => {this.fall = fall;}}>
+// <source
+// src="http://www.bndclan.com/Bend3r/Bend3r/hl-content/cstrike/sound/tetris/fall.wav"
+// </source>
+// </audio>
 
   render() {
     // console.log(this.state.context);
     return (
       <div>
         <br/>
-        <canvas id="world" ref="canvas" width={300} height={600}></canvas>
+        <canvas id="world" ref="canvas" width={this.state.worldWidth} height={this.state.worldHeight}></canvas>
         <button id="playbutton" onClick={() => this.playGameHandler()}>Play Tetris!</button>
+        <button id="startMusic" onClick={() => this.props.play()}>Start Music</button>
+        <button id="pauseMusic" onClick={() => this.props.pause()}>Pause Music</button>
       </div>
     );
   }
