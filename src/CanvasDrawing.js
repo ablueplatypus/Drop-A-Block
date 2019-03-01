@@ -10,7 +10,7 @@ class CanvasDrawing extends Component {
     this.gameOver = null;
     this.interval = null;
     this.intervalRender = null;
-    this.current = null;
+    this.currentShape = null;
     this.currentX = null;
     this.currentY = null;
     this.freezed = null;
@@ -45,7 +45,7 @@ class CanvasDrawing extends Component {
     ];
 
     this.randomPiece = [0,1,2,3,4,5,6]
-    console.log(this.props);
+    // console.log(this.props.stopMusic);
   } // end of contructor.
 
   state = {
@@ -53,6 +53,7 @@ class CanvasDrawing extends Component {
     worldHeight: 600,
     startGame: false,
     context: null,
+    loopMusic: true,
     // selectedSound: 'place'
     // input: new InputManager(),
   }
@@ -119,8 +120,8 @@ class CanvasDrawing extends Component {
     this.state.context.strokeStyle = 'black';
     for (let y = 0; y < 4; y++) {
       for (let x = 0; x < 4; ++x) {
-        if (this.current[y][x]) {
-          this.state.context.fillStyle = this.colors[this.current[y][x] - 1];
+        if (this.currentShape[y][x]) {
+          this.state.context.fillStyle = this.colors[this.currentShape[y][x] - 1];
           this.drawBlock(this.currentX + x, this.currentY + y)
         }
       }
@@ -132,7 +133,7 @@ class CanvasDrawing extends Component {
   clearAllIntervals(){
     clearInterval(this.interval);
     clearInterval(this.intervalRender);
-    console.log(this.intervalRender, this.interval);
+    // console.log(this.intervalRender, this.interval);
   }
 
 
@@ -150,35 +151,29 @@ class CanvasDrawing extends Component {
     }
     for (let i = array.length - 1; i > 0; i--) {
        let j = Math.floor(Math.random() * (i + 1));
+       // debugger
        [array[i], array[j]] = [array[j], array[i]]
     }
+    console.log(array);
     return array
   }
 
   newShape() {
-    // let min = 0;
-    // let max = 7;
     this.shuffel(this.randomPiece)
     let random = this.randomPiece.pop()
     let shape = this.tetromino[random]; // random for color filling
-    // console.log('length', tetromino.length);
-    // for (let i = 0; i < lastRandom.length; i++) {
-    //   if (lastRandom[i] === random) {
-    //     random = ramdom - 1
-    //   }
-    // }
-    // console.log(lastRandom);
-    this.current = [];
+
+    this.currentShape = [];
     for (let y = 0; y < 4; ++y) {
-        this.current[y] = [];
+        this.currentShape[y] = [];
         for (let x = 0; x < 4; ++x) {
           // console.log('newshape', x);
           // console.log(shape);
             let i = 4 * y + x;
             if (typeof shape[i] != undefined && shape[i]) {
-                this.current[y][x] = random + 1;
+                this.currentShape[y][x] = random + 1;
             } else {
-                this.current[y][x] = 0;
+                this.currentShape[y][x] = 0;
             }
         }
         // console.log(shape);
@@ -192,7 +187,7 @@ class CanvasDrawing extends Component {
     this.currentY = 0;
   }
 
-  valid(offsetX, offsetY, newCurrent=this.current) {
+  valid(offsetX, offsetY, newCurrent=this.currentShape) {
     offsetX = offsetX || 0;
     offsetY = offsetY || 0;
     offsetX = this.currentX + offsetX;
@@ -206,8 +201,11 @@ class CanvasDrawing extends Component {
                   || x + offsetX < 0
                   || y + offsetY >= this.rows
                   || x + offsetX >= this.columns) {
-                    if (offsetY == 1 && this.freezed) {
+                    if (offsetY === 1 && this.freezed) {
                         this.gameOver = true; // gameOver if the current shape is at the top row
+                        this.props.stopMusic()
+                        console.log(this.board);
+                        // music can stop here.
                         document.querySelector('#playbutton').disabled = false;
                     }
                     return false;
@@ -260,14 +258,18 @@ class CanvasDrawing extends Component {
   }
 
   freeze() {
-  for (let y = 0; y < 4; ++y) {
-      for (let x = 0; x < 4; ++x) {
-          if (this.current[y][x]) {
-              this.board[y + this.currentY][x + this.currentX] = this.current[y][x];
+  for (let y = 0; y < 4; ++y) { // y is the loop for each row in the board
+      for (let x = 0; x < 4; ++x) { // x is loop for each element in the tetromino piece.
+        // debugger
+          if (this.currentShape[y][x]) {
+            // console.log(this.currentShape[y][x]);
+            console.log(this.board[y + this.currentY][x + this.currentX]);
+              this.board[y + this.currentY][x + this.currentX] = this.currentShape[y][x];
           }
       }
   }
     this.freezed = true;
+    this.props.playFallSound()
   }
 
   keyPress = (key) => {
@@ -289,9 +291,9 @@ class CanvasDrawing extends Component {
           }
           break;
       case 'rotate':
-          let rotated = this.rotate(this.current);
+          let rotated = this.rotate(this.currentShapecurrentShape);
           if (this.valid(0, 0, rotated)) {
-              this.current = rotated;
+              this.currentShape = rotated;
           }
           break;
       case 'drop':
@@ -310,10 +312,10 @@ class CanvasDrawing extends Component {
       newCurrent[y] = [];
       for (let x = 0; x < 4; ++x) {
         // console.log(current[x][y]);
-          newCurrent[y][x] = this.current[3 - x][y];
+          newCurrent[y][x] = this.currentShape[3 - x][y];
       }
   }
-  console.log(newCurrent);
+  // console.log(newCurrent);
   return newCurrent;
 }
 
@@ -324,13 +326,12 @@ class CanvasDrawing extends Component {
     this.setState({
       startGame: true
     }/*,() => console.log(this.state)*/)
-
     this.intervalRender = setInterval(this.renderWorld, 30);
     this.clearBoard();
     this.newShape();
     this.gameOver = false;
     this.interval = setInterval(this.canMove, 500);
-    console.log(this.intervalRender, this.interval);
+    // console.log(this.intervalRender, this.interval);
     // console.log(this.board);
   }
 
@@ -359,7 +360,7 @@ class CanvasDrawing extends Component {
         <canvas id="world" ref="canvas" width={this.state.worldWidth} height={this.state.worldHeight}></canvas>
         <button id="playbutton" onClick={() => this.playGameHandler()}>Play Tetris!</button>
         <button id="startMusic" onClick={() => this.props.play()}>Start Music</button>
-        <button id="pauseMusic" onClick={() => this.props.pause()}>Pause Music</button>
+        <button id="pauseMusic" onClick={(e) => this.props.pause(e)}>Pause Music</button>
       </div>
     );
   }
