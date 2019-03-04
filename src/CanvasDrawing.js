@@ -366,7 +366,6 @@ class CanvasDrawing extends Component {
 //   console.log('hello from handleKeyPress');
 // }
 
-
   render() {
     return (
       <div className="tetris" onKeyDown={() => console.log("yup")}>

@@ -8,8 +8,9 @@
 canvas {
   display: block;
   margin: auto;
-  border: 2px solid black;
+  border: 2px solid magenta;
   background: black;
+  box-shadow: 6px 5px 4px #999;
 }
 
 #playbutton {
@@ -25,14 +26,15 @@ canvas {
   margin-top: 10px;
 }
 
-.scores {
-  border: solid 3px;
+.menu {
+  /* border: solid 3px; */
   flex: initial;
-  margin-left: 0.3rem;
+  font-size: 1.5em;
+  margin-left: 0.8rem;
   margin-top: 18px;
   height: 600px;
   order: 2;
-  width:300px;
+  width:400px;
 }
 
 .tetris {
@@ -70,4 +72,24 @@ canvas {
 .gameOver p {
   margin-block-end: 10px;
   margin-block-start: 20px;
+}
+
+.small-margin {
+  margin: 10px;
+}
+
+#click-to-play {
+  font-weight: 600;
+}
+
+#instructions li{
+  font-size: 1.2rem;
+}
+
+#score {
+
+}
+
+#lines {
+
 }
