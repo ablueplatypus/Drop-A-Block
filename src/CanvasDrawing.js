@@ -54,6 +54,7 @@ class CanvasDrawing extends Component {
     startGame: false,
     context: null,
     loopMusic: true,
+
     // selectedSound: 'place'
     // input: new InputManager(),
   }
@@ -69,27 +70,33 @@ class CanvasDrawing extends Component {
     // this.state.input.bindKeys();
     const context = this.refs.canvas.getContext('2d')
     this.setState({context: context})
+    // document.onkeydown = (e) => {
+    //   let keys = {
+    //       37: 'left',
+    //       39: 'right',
+    //       40: 'down',
+    //       38: 'rotate',
+    //       32: 'drop',
+    //       65: 'left',
+    //       68: 'right',
+    //       87: 'rotate',
+    //       83: 'drop',
+    //       13: 'rotate'
+    //   };
+    //   if (typeof keys[e.keyCode] != undefined) {
+    //     // console.log(typeof keys[e.keyCode]);
+    //       this.keyPress(keys[e.keyCode]);
+    //       // render();
+    //   }
+    // }
 
-    document.onkeydown = (e) => {
-      let keys = {
-          37: 'left',
-          39: 'right',
-          40: 'down',
-          38: 'rotate',
-          32: 'drop'
-      };
-      if (typeof keys[e.keyCode] != undefined) {
-        // console.log(typeof keys[e.keyCode]);
-          this.keyPress(keys[e.keyCode]);
-          // render();
-      }
-    };
     requestAnimationFrame(()=>{this.update()})
   }
 
   update = () => {
     // console.log(this.state.input.pressedKeys)
     if (this.state.startGame) {
+      this.keyPress()
     }
     requestAnimationFrame(() => {this.update()})
   }
@@ -103,30 +110,36 @@ class CanvasDrawing extends Component {
     this.state.context.strokeRect(30 * x, 30 * y, 30, 30)
   }
 
-  renderWorld = () => {
-    this.state.context.save()
-    this.state.context.clearRect(0,0, 300, 600)
+  keyPressFun = (e) => {
+    console.log(e);
+    // end of document onkeydown.
+  }
 
-    this.state.context.strokeStyle = 'black'
+  renderWorld = () => {
+    let context=this.state.context
+    context.save()
+    context.clearRect(0,0, 300, 600)
+
+    context.strokeStyle = 'black'
     for (let x = 0; x < this.columns; ++x) {
       for (let y = 0; y < this.rows; ++y) {
         if(this.board[y][x]) {
-          this.state.context.fillStyle = this.colors[this.board[y][x] - 1]
+          context.fillStyle = this.colors[this.board[y][x] - 1]
           this.drawBlock(x, y)
         }
       }
     }
-    this.state.context.fillStyle = 'red';
-    this.state.context.strokeStyle = 'black';
+    context.fillStyle = 'red';
+    context.strokeStyle = 'black';
     for (let y = 0; y < 4; y++) {
       for (let x = 0; x < 4; ++x) {
         if (this.currentShape[y][x]) {
-          this.state.context.fillStyle = this.colors[this.currentShape[y][x] - 1];
+          context.fillStyle = this.colors[this.currentShape[y][x] - 1];
           this.drawBlock(this.currentX + x, this.currentY + y)
         }
       }
     }
-    this.state.context.restore()
+    context.restore()
     // console.log(this.board)
   } // end of renderWolrd function.
 
@@ -154,7 +167,7 @@ class CanvasDrawing extends Component {
        // debugger
        [array[i], array[j]] = [array[j], array[i]]
     }
-    console.log(array);
+    // console.log(array);
     return array
   }
 
@@ -204,6 +217,7 @@ class CanvasDrawing extends Component {
                     if (offsetY === 1 && this.freezed) {
                         this.gameOver = true; // gameOver if the current shape is at the top row
                         this.props.stopMusic()
+                        this.props.gameOverSound()
                         console.log(this.board);
                         // music can stop here.
                         document.querySelector('#playbutton').disabled = false;
@@ -217,10 +231,10 @@ class CanvasDrawing extends Component {
   }
 
   clearLines() {
-    for (let y = this.rows - 1; y >= 0; --y) { // first for loop
+    for (let y = this.rows - 1; y >= 0; --y) {
         let rowFilled = true;
       for (let x = 0; x < this.columns; ++x) {
-        if (this.board[y][x] == 0) {
+        if (this.board[y][x] === 0) {
             rowFilled = false;
             break;
         }
@@ -302,6 +316,7 @@ class CanvasDrawing extends Component {
           }
           this.canMove();
           break;
+
     }
   }
 
@@ -343,24 +358,21 @@ class CanvasDrawing extends Component {
     this.props.play()
     document.querySelector('#playbutton').disabled = true
   }
-
 /*********************************************************************/
+// handleKeyPress = (event) => {
+//   // console.log(event);
+//   console.log('hello from handleKeyPress');
+// }
 
-// <audio ref={(fall) => {this.fall = fall;}}>
-// <source
-// src="http://www.bndclan.com/Bend3r/Bend3r/hl-content/cstrike/sound/tetris/fall.wav"
-// </source>
-// </audio>
 
   render() {
-    // console.log(this.state.context);
     return (
-      <div>
+      <div className="tetris" onKeyDown={() => console.log("yup")}>
         <br/>
         <canvas id="world" ref="canvas" width={this.state.worldWidth} height={this.state.worldHeight}></canvas>
         <button id="playbutton" onClick={() => this.playGameHandler()}>Play Tetris!</button>
-        <button id="startMusic" onClick={() => this.props.play()}>Start Music</button>
-        <button id="pauseMusic" onClick={(e) => this.props.pause(e)}>Pause Music</button>
+        <button className="soundbuttons" onClick={() => this.props.play()}>Start Music</button>
+        <button className="soundbuttons" onClick={(e) => this.props.pause(e)}>Pause Music</button>
       </div>
     );
   }

@@ -9,6 +9,8 @@ class App extends Component {
   this.url = "https://ia800504.us.archive.org/33/items/TetrisThemeMusic/Tetris.mp3"
   this.lineClear = "http://www.vertigogaming.org/downloads/svencoop/sound/sc_tetris/clear.wav"
   this.piecePlaced = "http://www.bndclan.com/Bend3r/Bend3r/hl-content/cstrike/sound/tetris/fall.wav"
+  this.gameOverSound = "http://mattersofgrey.com/audio/superMarioBros-gameOver.mp3"
+  this.gameOverAudio = new Audio(this.gameOverSound)
   this.placedAudio = new Audio (this.piecePlaced)
   this.lineClearAudio = new Audio(this.lineClear)
   this.audio = new Audio(this.url)
@@ -38,6 +40,10 @@ class App extends Component {
     this.audio.currentTime = 0
   }
 
+  gameOverSoundHandler = () => {
+    this.gameOverAudio.play()
+  }
+
   playLineClear = () => {
     this.lineClearAudio.play()
   }
@@ -58,16 +64,21 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <CanvasDrawing
-          music={this.state}
-          play={this.play}
-          pause={this.pauseTheme}
-          stopMusic={this.stop}
-          lineClearSound={this.playLineClear}
-          playFallSound={this.playFall}
-          />
-      </div>
+        <div className="App">
+          <div className="scores">
+            <p>High Score:</p>
+          </div>
+          <CanvasDrawing
+            music={this.state}
+            play={this.play}
+            pause={this.pauseTheme}
+            stopMusic={this.stop}
+            lineClearSound={this.playLineClear}
+            playFallSound={this.playFall}
+            gameOverSound={this.gameOverSoundHandler}
+            handleKeyPress={this.handleKeyPress}
+            />
+        </div>
     );
   }
 }
