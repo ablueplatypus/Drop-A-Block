@@ -78,6 +78,9 @@ class App extends Component {
             gameOverSound={this.gameOverSoundHandler}
             handleKeyPress={this.handleKeyPress}
             />
+            <div className="gameOver">
+              <p>Game Over</p>
+            </div>
         </div>
     );
   }

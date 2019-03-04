@@ -41,6 +41,7 @@ canvas {
   flex: 0 1 auto;
   order: 1;
   position: relative;
+  margin-left: -100px;
 }
 
 .soundbuttons {
@@ -50,4 +51,23 @@ canvas {
   margin-top: 5px;
   margin-left: 8px;
   cursor: pointer;
+}
+
+.gameOver {
+    background: #80808038;
+    visibility: hidden;
+    color: white;
+    font-size: 30px;
+    font-family: 'Press Start 2p', Arial, sans-serif;
+    height: 66px;
+    left: 211px;
+    position: relative;
+    top: 261px;
+    text-align: center;
+    width: 305px;
+}
+
+.gameOver p {
+  margin-block-end: 10px;
+  margin-block-start: 20px;
 }

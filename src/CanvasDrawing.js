@@ -70,25 +70,25 @@ class CanvasDrawing extends Component {
     // this.state.input.bindKeys();
     const context = this.refs.canvas.getContext('2d')
     this.setState({context: context})
-    // document.onkeydown = (e) => {
-    //   let keys = {
-    //       37: 'left',
-    //       39: 'right',
-    //       40: 'down',
-    //       38: 'rotate',
-    //       32: 'drop',
-    //       65: 'left',
-    //       68: 'right',
-    //       87: 'rotate',
-    //       83: 'drop',
-    //       13: 'rotate'
-    //   };
-    //   if (typeof keys[e.keyCode] != undefined) {
-    //     // console.log(typeof keys[e.keyCode]);
-    //       this.keyPress(keys[e.keyCode]);
-    //       // render();
-    //   }
-    // }
+    document.onkeydown = (e) => {
+      let keys = {
+          37: 'left',
+          39: 'right',
+          40: 'down',
+          38: 'rotate',
+          32: 'drop',
+          65: 'left',
+          68: 'right',
+          87: 'rotate',
+          83: 'drop',
+          13: 'rotate'
+      };
+      if (typeof keys[e.keyCode] != undefined) {
+        // console.log(typeof keys[e.keyCode]);
+          this.keyPress(keys[e.keyCode]);
+          // render();
+      }
+    }
 
     requestAnimationFrame(()=>{this.update()})
   }
@@ -221,6 +221,7 @@ class CanvasDrawing extends Component {
                         console.log(this.board);
                         // music can stop here.
                         document.querySelector('#playbutton').disabled = false;
+                        document.querySelector('.gameOver').style.visibility = "visible"
                     }
                     return false;
                 }
@@ -356,6 +357,7 @@ class CanvasDrawing extends Component {
     // console.log('in playGameHandler');
     this.startGame();
     this.props.play()
+    document.querySelector('.gameOver').style.visibility = "hidden"
     document.querySelector('#playbutton').disabled = true
   }
 /*********************************************************************/
