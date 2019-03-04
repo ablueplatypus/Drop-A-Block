@@ -235,7 +235,9 @@ class CanvasDrawing extends Component {
                         this.props.stopMusic()
                         this.props.gameOverSound()
                         this.setState ({
-                          playing: false
+                          playing: false,
+                          lineCnt: 0,
+                          score: 0
                         })
                         // console.log(this.board);
                         // music can stop here.
@@ -250,7 +252,30 @@ class CanvasDrawing extends Component {
     return true;
   }
 
+
+  calculateScore = (lineCnt) => {
+    switch(lineCnt) {
+      // if line count is x: 1 return 40
+      case 1:
+        return 40
+        break;
+      case 2:
+        return (40 * 2.5)
+        break;
+      case 3:
+        return (100 * 3)
+        break;
+      case 4:
+        return (300 * 4)
+        break;
+      default:
+        return null
+        break;
+    }
+  }
+
   clearLines() {
+    let numLinesCleared = 0
     for (let y = this.rows - 1; y >= 0; --y) {
         let rowFilled = true;
       for (let x = 0; x < this.columns; ++x) {
@@ -261,6 +286,7 @@ class CanvasDrawing extends Component {
       }
       // will try to add a red blinking line before cleared.
       if (rowFilled) {
+        numLinesCleared += 1
         for (let curRow = y; curRow > 0; --curRow) {
               // console.log(oldrow);
           for (let x = 0; x < this.columns; ++x) {
@@ -268,15 +294,15 @@ class CanvasDrawing extends Component {
               this.board[curRow][x] = this.board[curRow - 1][x];
           }
         }
-          this.setState({
-            lineCnt: this.state.lineCnt + 1,
-            score: this.state.score + 40
-          })
           // put sound for line clear here!
           this.props.lineClearSound()
           ++y;
       } // end of if rowFilled
-    } // end of first for loop
+    }
+    this.setState({
+      lineCnt: this.state.lineCnt + numLinesCleared,
+      score: this.state.score + this.calculateScore(numLinesCleared)
+    }) // end of first for loop
   }
 
   canMove = () => {
