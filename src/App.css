@@ -5,13 +5,21 @@
    justify-content: center
  }
 
-canvas {
+ canvas {
   display: block;
   margin: auto;
-  border: 2px solid magenta;
+  border: 2px solid #790179;
   background: black;
   box-shadow: 6px 5px 4px #999;
 }
+
+ /* #nextpiece {
+   width: 200px;
+  height: 200px;
+  margin: 0;
+  border: 5px solid #00d600;
+}
+*/
 
 #playbutton {
   /* width: 100px;
@@ -29,12 +37,13 @@ canvas {
 .menu {
   /* border: solid 3px; */
   flex: initial;
-  font-size: 1.5em;
+  font-size: 2em;
   margin-left: 0.8rem;
   margin-top: 18px;
   height: 600px;
   order: 2;
   width:400px;
+  font-family: 'ZCOOL QingKe HuangYou', cursive;
 }
 
 .tetris {
@@ -79,17 +88,26 @@ canvas {
 }
 
 #click-to-play {
-  font-weight: 600;
+  font-weight: 500;
 }
 
-#instructions li{
-  font-size: 1.2rem;
+#instructions{
+  margin: 0;
+  text-decoration: underline;
+  color: darkblue;
+}
+#list {
+  font-size: 1.5rem;
+  margin-top: 10px;
+  padding-left: 25px;
 }
 
 #score {
-
+  font-weight: 700;
+  color: red;
 }
 
 #lines {
-
+  font-weight: 700;
+  color: green;
 }

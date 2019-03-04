@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 // import InputManager from './InputManager'
+import ScoreMenu from './ScoreMenu'
 
 class CanvasDrawing extends Component {
   constructor(props) {
@@ -51,9 +52,12 @@ class CanvasDrawing extends Component {
   state = {
     worldWidth: 300,
     worldHeight: 600,
-    startGame: false,
+    playing: false,
     context: null,
     loopMusic: true,
+    nextpiece: [],
+    lineCnt: 0,
+    score: 0,
 
     // selectedSound: 'place'
     // input: new InputManager(),
@@ -96,7 +100,7 @@ class CanvasDrawing extends Component {
   update = () => {
     // console.log(this.state.input.pressedKeys)
     if (this.state.startGame) {
-      this.keyPress()
+      // this.keyPress()
     }
     requestAnimationFrame(() => {this.update()})
   }
@@ -106,8 +110,10 @@ class CanvasDrawing extends Component {
   }
 
   drawBlock = (x, y) => {
-    this.state.context.fillRect(30 * x, 30 * y, 25, 25) // controls the postion (x,y) and the width and height of the tetrominos
-    this.state.context.strokeRect(30 * x, 30 * y, 30, 30)
+    let context = this.state.context
+    context.fillRect(30 * x, 30 * y, 26, 26) // controls the postion (x,y) and the width and height of the tetrominos
+    // context.strokeStyle = '#717171'
+    context.strokeRect(30 * x, 30 * y, 26, 26)
   }
 
   keyPressFun = (e) => {
@@ -116,10 +122,11 @@ class CanvasDrawing extends Component {
   }
 
   renderWorld = () => {
-    let context=this.state.context
+    let context = this.state.context
     context.save()
     context.clearRect(0,0, 300, 600)
 
+    // draws the board with the tetrominos that have been frozen in place.
     context.strokeStyle = 'black'
     for (let x = 0; x < this.columns; ++x) {
       for (let y = 0; y < this.rows; ++y) {
@@ -129,6 +136,7 @@ class CanvasDrawing extends Component {
         }
       }
     }
+    // draws each tetromnio as they fall.
     context.fillStyle = 'red';
     context.strokeStyle = 'black';
     for (let y = 0; y < 4; y++) {
@@ -174,6 +182,14 @@ class CanvasDrawing extends Component {
   newShape() {
     this.shuffel(this.randomPiece)
     let random = this.randomPiece.pop()
+    // console.log(this.randomPiece);
+    let nextpiece = this.randomPiece[this.randomPiece.length - 1]
+    if (nextpiece !== undefined) {
+      this.setState({
+        nextpiece: nextpiece
+      }/*, () => console.log(this.state.nextpiece)*/)
+    }
+
     let shape = this.tetromino[random]; // random for color filling
 
     this.currentShape = [];
@@ -218,7 +234,10 @@ class CanvasDrawing extends Component {
                         this.gameOver = true; // gameOver if the current shape is at the top row
                         this.props.stopMusic()
                         this.props.gameOverSound()
-                        console.log(this.board);
+                        this.setState ({
+                          playing: false
+                        })
+                        // console.log(this.board);
                         // music can stop here.
                         document.querySelector('#playbutton').disabled = false;
                         document.querySelector('.gameOver').style.visibility = "visible"
@@ -237,10 +256,10 @@ class CanvasDrawing extends Component {
       for (let x = 0; x < this.columns; ++x) {
         if (this.board[y][x] === 0) {
             rowFilled = false;
-            break;
+            // break;
         }
       }
-      // will try to add a red blinking line first.
+      // will try to add a red blinking line before cleared.
       if (rowFilled) {
         for (let curRow = y; curRow > 0; --curRow) {
               // console.log(oldrow);
@@ -249,6 +268,10 @@ class CanvasDrawing extends Component {
               this.board[curRow][x] = this.board[curRow - 1][x];
           }
         }
+          this.setState({
+            lineCnt: this.state.lineCnt + 1,
+            score: this.state.score + 40
+          })
           // put sound for line clear here!
           this.props.lineClearSound()
           ++y;
@@ -278,7 +301,7 @@ class CanvasDrawing extends Component {
         // debugger
           if (this.currentShape[y][x]) {
             // console.log(this.currentShape[y][x]);
-            console.log(this.board[y + this.currentY][x + this.currentX]);
+            // console.log(this.board[y + this.currentY][x + this.currentX]);
               this.board[y + this.currentY][x + this.currentX] = this.currentShape[y][x];
           }
       }
@@ -340,7 +363,7 @@ class CanvasDrawing extends Component {
     // it will also fire other funcations that will allow the tetrominos to start falling.
     // console.log('In Start Game', this.state.startGame);
     this.setState({
-      startGame: true
+      playing: true
     }/*,() => console.log(this.state)*/)
     this.intervalRender = setInterval(this.renderWorld, 30);
     this.clearBoard();
@@ -368,13 +391,16 @@ class CanvasDrawing extends Component {
 
   render() {
     return (
-      <div className="tetris" onKeyDown={() => console.log("yup")}>
-        <br/>
-        <canvas id="world" ref="canvas" width={this.state.worldWidth} height={this.state.worldHeight}></canvas>
-        <button id="playbutton" onClick={() => this.playGameHandler()}>Play Tetris!</button>
-        <button className="soundbuttons" onClick={() => this.props.play()}>Start Music</button>
-        <button className="soundbuttons" onClick={(e) => this.props.pause(e)}>Pause Music</button>
-      </div>
+      <React.Fragment>
+        <ScoreMenu state={this.state}/>
+        <div className="tetris" onKeyDown={(e) => console.log(e.key)}>
+          <br/>
+          <canvas id="world" ref="canvas" width={this.state.worldWidth} height={this.state.worldHeight}></canvas>
+          <button id="playbutton" onClick={() => this.playGameHandler()}>Play Tetris!</button>
+          <button className="soundbuttons" onClick={() => this.props.play()}>Start Music</button>
+          <button className="soundbuttons" onClick={(e) => this.props.pause(e)}>Pause Music</button>
+        </div>
+      </React.Fragment>
     );
   }
 

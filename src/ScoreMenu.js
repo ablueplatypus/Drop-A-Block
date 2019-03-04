@@ -1,27 +1,59 @@
 import React, {Component} from 'react';
-import  CanvasDrawing from './CanvasDrawing'
+
 
 class ScoreMenu extends Component {
 
+  state = {
+    context: null,
+  }
+
+  componentDidMount() {
+    const context = this.refs.canvas.getContext('2d')
+    this.setState({context: context})
+    context.fillStyle = "cyan"
+    context.fillRect(85, 20, 30, 30)
+    context.fillRect(85, 55, 30, 30)
+    context.fillRect(85, 90, 30, 30)
+    context.fillRect(85, 125, 30, 30)
+
+  }
+
+  renderNextTetromino = () => {
+    let context = this.state.context
+    context.save()
+    context.clearRect(0,0,200,200)
+  }
+  update = () => {
+    if(this.props.state.playing){
+
+    }
+    requestAnimationFrame(() => {this.update()})
+  }
 
 
   render() {
-    console.log(this.props);
+    // console.log(this.props.state);
     return (
       <div className="menu">
         <p id="click-to-play">Click Play Tetris button to Start!
         </p>
-          <ul id="instructions">Controls:
-            <li>WASD or Arrow keys to move</li>
-            <li>Up Arrow key to Rotate or Enter</li>
-            <li>Space to drop peice</li>
-          </ul>
+          <p id="instructions">Controls:</p>
+            <ul id="list">
+              <li>WASD or Arrow keys to move</li>
+              <li>Up Arrow key to Rotate or Enter</li>
+              <li>Space to drop peice</li>
+            </ul>
+
         <p className="small-margin">Score:
-          <span id="score"> 0</span>
+          <span id="score"> {this.props.state.score}</span>
         </p>
-        <p className="small-margin">Lines:
-          <span id="lines"> 0</span>
+        <p className="small-margin">Lines Cleared:
+          <span id="lines"> {this.props.state.lineCnt}</span>
         </p>
+          <p className="small-margin">
+            Next Piece:
+          </p>
+          <canvas ref="canvas" id="next-piece" width={200} height={200} style={{margin: 0}}></canvas>
       </div>
     )
   }

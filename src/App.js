@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
 import CanvasDrawing from './CanvasDrawing'
-import ScoreMenu from './ScoreMenu'
 
 class App extends Component {
   constructor(props) {
@@ -66,7 +65,6 @@ class App extends Component {
   render() {
     return (
         <div className="App">
-          <ScoreMenu/>
           <CanvasDrawing
             music={this.state}
             play={this.play}
