@@ -11,11 +11,10 @@ class ScoreMenu extends Component {
     const context = this.refs.canvas.getContext('2d')
     this.setState({context: context})
     context.fillStyle = "cyan"
-    context.fillRect(85, 20, 30, 30)
-    context.fillRect(85, 55, 30, 30)
-    context.fillRect(85, 90, 30, 30)
-    context.fillRect(85, 125, 30, 30)
-
+    // context.fillRect(85, 20, 30, 30)
+    // context.fillRect(85, 55, 30, 30)
+    // context.fillRect(85, 90, 30, 30)
+    // context.fillRect(85, 125, 30, 30)
   }
 
   renderNextTetromino = () => {
@@ -30,31 +29,30 @@ class ScoreMenu extends Component {
     requestAnimationFrame(() => {this.update()})
   }
 
-
   render() {
-    // console.log(this.props.state);
     return (
-      <div className="menu">
-        <p id="click-to-play">Click Play Tetris button to Start!
-        </p>
-          <p id="instructions">Controls:</p>
-            <ul id="list">
-              <li>WASD or Arrow keys to move</li>
-              <li>Up Arrow key to Rotate or Enter</li>
-              <li>Space to drop peice</li>
-            </ul>
-
-        <p className="small-margin">Score:
-          <span id="score"> {this.props.state.score}</span>
-        </p>
-        <p className="small-margin">Lines Cleared:
-          <span id="lines"> {this.props.state.lineCnt}</span>
-        </p>
-          <p className="small-margin">
-            Next Piece:
+      <React.Fragment>
+        <div className="menu">
+          <p id="click-to-play">Click Play Tetris button to Start!
           </p>
-          <canvas ref="canvas" id="next-piece" width={200} height={200} style={{margin: 0}}></canvas>
-      </div>
+            <p id="instructions">Controls:</p>
+              <ul id="list">
+                <li>WASD or Arrow keys to move</li>
+                <li>Up Arrow key to Rotate or Enter</li>
+                <li>Space to drop peice</li>
+              </ul>
+          <p className="small-margin">Score:
+            <span id="score"> {this.props.state.score}</span>
+          </p>
+          <p className="small-margin">Lines Cleared:
+            <span id="lines"> {this.props.state.lineCnt}</span>
+          </p>
+            <p className="small-margin">
+              Next Piece:
+            </p>
+            <canvas ref="canvas" id="next-piece" width={200} height={200} style={{margin: 0}}></canvas>
+        </div>
+      </React.Fragment>
     )
   }
 

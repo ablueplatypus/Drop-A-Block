@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 // import InputManager from './InputManager'
 import ScoreMenu from './ScoreMenu'
+import { tetromino, colors } from "./gameAssets"
 
 class CanvasDrawing extends Component {
   constructor(props) {
@@ -16,37 +17,9 @@ class CanvasDrawing extends Component {
     this.currentY = null;
     this.freezed = null;
     this.points = 0;
-    this.tetromino = [
-        [1, 1, 1, 1],
-
-        [1, 1, 1, 0,
-         1],
-
-        [ 0, 0, 0, 0,
-          1, 1, 1, 0,
-          0, 0, 1, 0,
-          0, 0, 0, 0],
-
-        [0, 0, 0, 0,
-         0, 1, 1, 0,
-         0, 1, 1, 0,
-         0, 0, 0, 0,],
-
-        [1, 1, 0, 0,
-         0, 1, 1],
-
-        [0, 1, 1, 0,
-         1, 1],
-
-        [0, 1, 0, 0,
-         1, 1, 1]
-    ]
-    this.colors = [
-      'cyan', 'orange', 'blue', 'yellow', 'red', 'green', 'magenta'
-    ];
-
+    this.tetromino = tetromino
+    this.colors = colors
     this.randomPiece = [0,1,2,3,4,5,6]
-    // console.log(this.props.stopMusic);
   } // end of contructor.
 
   state = {
@@ -62,6 +35,7 @@ class CanvasDrawing extends Component {
     // selectedSound: 'place'
     // input: new InputManager(),
   }
+
 
 
   // key presses should update the state of context.
@@ -89,11 +63,12 @@ class CanvasDrawing extends Component {
       };
       if (typeof keys[e.keyCode] != undefined) {
         // console.log(typeof keys[e.keyCode]);
-          this.keyPress(keys[e.keyCode]);
+          if (this.state.playing)
+            this.keyPress(keys[e.keyCode]);
           // render();
       }
     }
-
+    this.passUpStats() // passing up state of scores to App.
     requestAnimationFrame(()=>{this.update()})
   }
 
@@ -166,7 +141,7 @@ class CanvasDrawing extends Component {
         }
     }
   }
-  shuffel(array) {
+  shuffle(array) {
     if (this.randomPiece.length === 0) {
       this.randomPiece = [0,1,2,3,4,5,6]
     }
@@ -180,7 +155,7 @@ class CanvasDrawing extends Component {
   }
 
   newShape() {
-    this.shuffel(this.randomPiece)
+    this.shuffle(this.randomPiece)
     let random = this.randomPiece.pop()
     // console.log(this.randomPiece);
     let nextpiece = this.randomPiece[this.randomPiece.length - 1]
@@ -217,6 +192,7 @@ class CanvasDrawing extends Component {
   }
 
   valid(offsetX, offsetY, newCurrent=this.currentShape) {
+    let context = this.state.context
     offsetX = offsetX || 0;
     offsetY = offsetY || 0;
     offsetX = this.currentX + offsetX;
@@ -235,14 +211,14 @@ class CanvasDrawing extends Component {
                         this.props.stopMusic()
                         this.props.gameOverSound()
                         this.setState ({
-                          playing: false,
-                          lineCnt: 0,
-                          score: 0
+                          playing: false
                         })
                         // console.log(this.board);
                         // music can stop here.
+                        // context.clearRect(0,0,300,600)
                         document.querySelector('#playbutton').disabled = false;
                         document.querySelector('.gameOver').style.visibility = "visible"
+                        document.querySelector('.initial-input').style.visibility = "visible"
                     }
                     return false;
                 }
@@ -389,7 +365,9 @@ class CanvasDrawing extends Component {
     // it will also fire other funcations that will allow the tetrominos to start falling.
     // console.log('In Start Game', this.state.startGame);
     this.setState({
-      playing: true
+      playing: true,
+      score: 0,
+      lineCnt: 0
     }/*,() => console.log(this.state)*/)
     this.intervalRender = setInterval(this.renderWorld, 30);
     this.clearBoard();
@@ -407,20 +385,42 @@ class CanvasDrawing extends Component {
     this.startGame();
     this.props.play()
     document.querySelector('.gameOver').style.visibility = "hidden"
+    document.querySelector('.initial-input').style.visibility = "hidden"
     document.querySelector('#playbutton').disabled = true
   }
 /*********************************************************************/
-// handleKeyPress = (event) => {
-//   // console.log(event);
-//   console.log('hello from handleKeyPress');
-// }
+
+  sortScore = () => {
+    let sorted = this.props.state.statData.sort((a,b) => {
+      return b.high_score - a.high_score
+    })
+    return sorted
+  }
+
+  topScore = () => {
+    return this.sortScore()[0]
+  }
+
+  passUpStats = () => {
+    let stats = {
+      line: this.state.lineCnt,
+      score: this.state.score
+    }
+    this.props.getStats(stats)
+  }
 
   render() {
     return (
       <React.Fragment>
-        <ScoreMenu state={this.state}/>
+        <ScoreMenu state={this.state} appState={this.props.state}/>
         <div className="tetris" onKeyDown={(e) => console.log(e.key)}>
-          <br/>
+          <div className="leaderboard">
+            <ul id="leaderboard-list">
+              <li>Initial:<span id="initials">{this.topScore() ? this.topScore().initials : 'name'}</span></li>
+              <li id="high-score"> High Score:<span className="hi-score">{this.topScore() ? this.topScore().high_score : "0"}</span></li>
+              <li id="high-line"> Lines:<span className="hi-score">{this.topScore() ? this.topScore().line_clear : "0"}</span></li>
+            </ul>
+          </div>
           <canvas id="world" ref="canvas" width={this.state.worldWidth} height={this.state.worldHeight}></canvas>
           <button id="playbutton" onClick={() => this.playGameHandler()}>Play Tetris!</button>
           <button className="soundbuttons" onClick={() => this.props.play()}>Start Music</button>

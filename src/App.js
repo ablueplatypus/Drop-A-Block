@@ -20,14 +20,33 @@ class App extends Component {
   state = {
     play: false,
     pause: true,
-    stop: false
+    stop: false,
+    statData: [],
+    initials: ''
+
+
   }
+
+  componentDidMount() {
+    this.getUserData()
+  }
+
+  getUserData = () => {
+    return fetch('http://localhost:9000/api/v1/stats')
+      .then(res => res.json())
+      .then(statData => {
+        this.setState({
+          statData: statData
+        })
+      })
+    }
 
   play = () => {
     this.setState ({
       play: true,
       pause: false
     })
+    this.audio.loop = true;
     this.audio.play()
   }
 
@@ -61,12 +80,44 @@ class App extends Component {
     this.placedAudio.play()
   }
 
+  getStats = (stats) => {
+    console.log(stats);
+    return stats
+  }
+
+  handleInitialChange = (e) => {
+    // console.log(e.target.value);
+    this.setState({
+      initials: e.target.value
+    })
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault()
+    console.log(this.getStats());
+    // fetch('http://localhost:9000/api/v1/stats', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Accept': 'application/json'
+    //   },
+    //   body: JSON.stringify({
+    //     initials: this.state.initials,
+    //     high_score: this.getStats().line,
+    //     line_clear: this.getStats().score
+    //   })
+    // })
+    // document.querySelector("#initial-input").reset()
+  } // end of handleSubmit
+
 
   render() {
+    // debugger
+    this.getStats()
     return (
         <div className="App">
           <CanvasDrawing
-            music={this.state}
+            state={this.state}
             play={this.play}
             pause={this.pauseTheme}
             stopMusic={this.stop}
@@ -74,10 +125,19 @@ class App extends Component {
             playFallSound={this.playFall}
             gameOverSound={this.gameOverSoundHandler}
             handleKeyPress={this.handleKeyPress}
+            getStats={this.getStats}
             />
-            <div className="gameOver">
-              <p>Game Over</p>
-            </div>
+              <div className="initial-input">
+                <form id="inital-input-form" onSubmit={this.handleSubmit}>
+                  <input onChange={this.handleInitialChange} className="blinking" type="text" maxLength="3"/>
+                </form>
+              </div>
+                <div className="top-ten-scores">
+                </div>
+              <div className="gameOver">
+                <p>Game Over</p>
+              </div>
+
         </div>
     );
   }
