@@ -103,16 +103,14 @@
   right: 55px;
 }
 
-/* .blinking{
-    animation:blinkingText 0.8s infinite;
+.blinking{
+    animation:blinkingText 1.5s infinite;
 }
 @keyframes blinkingText{
-    0%   { color: #ff0000;     }
-    25%  { color: transparent; }
-    50%  { color: transparent; }
-    85%  { color:transparent;  }
-    100% { color: #ff0000;     }
-} */
+  0%  { color: #ff0000; }
+  50% { color: #ff0000; }
+  100%{ color: transparent; }
+}
 
 .hi-score {
   font-weight: 700;
@@ -120,12 +118,16 @@
 }
 .leaderboard {
   font-family: 'Press Start 2p', Arial, sans-serif;
-  color: red;
+  color: #e2ddb5;
   position: absolute;
-  visibility: hidden;
   text-align: center;
-  left: 55px;
   top: 60px;
+  right: 0px;
+  font-size: 1rem;
+  visibility: hidden;
+}
+.leaderboard h3 {
+  margin-bottom: 50px;
 }
 
 #click-to-play {
@@ -168,10 +170,6 @@
   color: #3fc31f;
 }
 
-#initial-list {
-  list-style: none;
-}
-
 #playbutton {
   /* width: 100px;
   height: 100px; */
@@ -187,15 +185,23 @@
   border-radius: 10px;
 }
 
+#rank-titles {
+  display: inline;
+  list-style: none;
+  margin: 1px;
+  padding-inline-start: 2px;
+  width: 300px;
+}
+#rank-titles li {
+  padding: 18px;
+  display: inline;
+}
+
 #rank {
   list-style: none;
+  padding: 0;
 }
-
-#score-list {
-  list-style: none;
-}
-
-#score-list li {
+#rank li {
   padding: 10px;
 }
 

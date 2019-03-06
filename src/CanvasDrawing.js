@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 // import InputManager from './InputManager'
-import ScoreMenu from './ScoreMenu'
-import { tetromino, colors } from "./gameAssets"
+import ScoreMenu from './ScoreMenu';
+import Leaderboard from './Leaderboard';
+import { tetromino, colors, BLOCK_SIZE, TETROMINO_BLOCK, BLOCK_OUTLINE} from "./gameAssets";
 
 class CanvasDrawing extends Component {
   constructor(props) {
@@ -16,8 +17,7 @@ class CanvasDrawing extends Component {
     this.currentX = null;
     this.currentY = null;
     this.freezed = null;
-    this.points = 0;
-    this.colors = colors
+    this.randomPiece = [0,1,2,3,4,5,6]
   } // end of contructor.
 
   state = {
@@ -30,8 +30,6 @@ class CanvasDrawing extends Component {
     statData: [],
     worldWidth: 300,
     worldHeight: 600,
-    // selectedSound: 'place'
-    // input: new InputManager(),
   }
 
   // key presses should update the state of context.
@@ -39,6 +37,16 @@ class CanvasDrawing extends Component {
   //they will be located in the constructor function this.
   // will need a funcation that starts the game.
   // the first thing this will do
+
+  getUserData = () => {
+    return fetch(`http://${window.location.hostname}:9000/api/v1/stats`)
+      .then(res => res.json())
+      .then(statData => {
+        this.setState({
+          statData: statData
+        }/*,() => console.log(this.state.statData)*/)
+      })
+    }
 
   componentDidMount() {
     // this.state.input.bindKeys();
@@ -64,20 +72,10 @@ class CanvasDrawing extends Component {
           // render();
       }
     }
-    this.getUserData()
-    this.passUpStats() // passing up state of scores to App.
+    this.getUserData()  // fetching for the stat data.
+    this.passUpStats()  // passing up state of scores to App.
     requestAnimationFrame(()=>{this.update()})
   }
-
-  getUserData = () => {
-    return fetch(`http://${window.location.hostname}:9000/api/v1/stats`)
-      .then(res => res.json())
-      .then(statData => {
-        this.setState({
-          statData: statData
-        },() => console.log(this.state.statData))
-      })
-    }
 
   update = () => {
     // console.log(this.state.input.pressedKeys)
@@ -87,25 +85,18 @@ class CanvasDrawing extends Component {
     requestAnimationFrame(() => {this.update()})
   }
 
-  componentWillUnmount() {
-    // this.state.input.unbindKeys();
-  }
-
   drawBlock = (x, y) => {
     let context = this.state.context
-    context.fillRect(30 * x, 30 * y, 26, 26) // controls the postion (x,y) and the width and height of the tetrominos
+    context.fillRect(BLOCK_SIZE * x, BLOCK_SIZE * y, TETROMINO_BLOCK, TETROMINO_BLOCK) // controls the postion (x,y) and the width and height of the tetrominos
     // context.strokeStyle = '#717171'
-    context.strokeRect(30 * x, 30 * y, 26, 26)
-  }
-
-  keyPressFun = (e) => {
-    console.log(e);
-    // end of document onkeydown.
+    context.strokeRect(BLOCK_SIZE * x, BLOCK_SIZE * y, BLOCK_OUTLINE, BLOCK_OUTLINE)
   }
 
   renderWorld = () => {
     let context = this.state.context
     context.save()
+    // clearing board to black.
+    context.globalAlpha = 1;
     context.clearRect(0,0, 300, 600)
 
     // draws the board with the tetrominos that have been frozen in place.
@@ -113,7 +104,7 @@ class CanvasDrawing extends Component {
     for (let x = 0; x < this.columns; ++x) {
       for (let y = 0; y < this.rows; ++y) {
         if(this.board[y][x]) {
-          context.fillStyle = this.colors[this.board[y][x] - 1]
+          context.fillStyle = colors[this.board[y][x] - 1]
           this.drawBlock(x, y)
         }
       }
@@ -124,7 +115,7 @@ class CanvasDrawing extends Component {
     for (let y = 0; y < 4; y++) {
       for (let x = 0; x < 4; ++x) {
         if (this.currentShape[y][x]) {
-          context.fillStyle = this.colors[this.currentShape[y][x] - 1];
+          context.fillStyle = colors[this.currentShape[y][x] - 1];
           this.drawBlock(this.currentX + x, this.currentY + y)
         }
       }
@@ -171,8 +162,7 @@ class CanvasDrawing extends Component {
         nextpiece: nextpiece
       }/*, () => console.log(this.state.nextpiece)*/)
     }
-
-    let shape = this.tetromino[random]; // random for color filling
+    let shape = tetromino[random]; // random for color filling
 
     this.currentShape = [];
     for (let y = 0; y < 4; ++y) {
@@ -222,9 +212,11 @@ class CanvasDrawing extends Component {
                         this.setState ({
                           playing: false
                         })
-                        // console.log(this.board);
+                        console.log(this.state.context);
                         // music can stop here.
-                        // context.clearRect(0,0,300,600)
+                        context.globalAlpha = .5
+                        context.fillRect(0,0,300,600)
+                        // this.delayScreenClear()
                         document.querySelector('#playbutton').disabled = false;
                         document.querySelector('.gameOver').style.visibility = "visible"
                         document.querySelector('.initial-input').style.visibility = "visible"
@@ -260,6 +252,7 @@ class CanvasDrawing extends Component {
   }
 
   clearLines() {
+    let context = this.state.context
     let numLinesCleared = 0
     for (let y = this.rows - 1; y >= 0; --y) {
         let rowFilled = true;
@@ -271,11 +264,12 @@ class CanvasDrawing extends Component {
       }
       // will try to add a red blinking line before cleared.
       if (rowFilled) {
+        console.log(this.board[19]);
+        let filledRow = this.board[19]
         numLinesCleared += 1
         for (let curRow = y; curRow > 0; --curRow) {
               // console.log(oldrow);
           for (let x = 0; x < this.columns; ++x) {
-                // console.log(board[curRow]);
               this.board[curRow][x] = this.board[curRow - 1][x];
           }
         }
@@ -388,17 +382,19 @@ class CanvasDrawing extends Component {
   }
 
 
-/************************Click Handler********************************/
+/************************* Click Handler ********************************/
   playGameHandler = () => {
     // console.log('in playGameHandler');
     this.startGame();
     this.props.play()
     document.querySelector('.gameOver').style.visibility = "hidden"
     document.querySelector('.initial-input').style.visibility = "hidden"
+    document.querySelector('.leaderboard').style.visibility = "hidden"
     document.querySelector('#playbutton').disabled = true
   }
-/*********************************************************************/
+/**********************************************************************/
 
+/************************* Score Logic *********************************/
   sortScore = () => {
     let sorted = this.state.statData.sort((a,b) => {
       return b.high_score - a.high_score
@@ -419,10 +415,11 @@ class CanvasDrawing extends Component {
       line: this.state.lineCnt,
       score: this.state.score
     }
-    console.log(stats);
+    // console.log(stats);
     this.props.getStats(stats)
   }
 
+/**********************************************************************/
 
   render() {
     return (

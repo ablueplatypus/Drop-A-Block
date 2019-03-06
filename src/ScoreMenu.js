@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
 
 class ScoreMenu extends Component {
@@ -55,7 +55,6 @@ class ScoreMenu extends Component {
       </React.Fragment>
     )
   }
-
 
 } // end of ScoreMenu class
 

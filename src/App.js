@@ -84,12 +84,11 @@ class App extends Component {
 
   // gets the game score and line clear count form state of CanvasDrawing
   getStats = (stats) => {
-    console.log('in app',stats.line);
+    // console.log('in app',stats.line);
     this.setState({
       line: stats.line,
       score: stats.score
     })
-
   }
 
   handleInitialChange = (e) => {
@@ -109,7 +108,7 @@ class App extends Component {
         'Accept': 'application/json'
       },
       body: JSON.stringify({
-        initials: this.state.initials,
+        initials: this.state.initials.toUpperCase(),
         high_score: this.state.score,
         line_clear: this.state.line
       })
@@ -117,12 +116,12 @@ class App extends Component {
     document.getElementById('initial-input-form').reset()
     document.querySelector('.initial-input').style.visibility = "hidden"
     document.querySelector('.gameOver').style.visibility = "hidden"
-    // document.querySelector('.')
+    // clear board here.
+    document.querySelector('.leaderboard').style.visibility = "visible"
   } // end of handleSubmit
 
 
   render() {
-    // debugger
     return (
         <div className="App">
           <CanvasDrawing
@@ -135,14 +134,13 @@ class App extends Component {
             gameOverSound={this.gameOverSoundHandler}
             handleKeyPress={this.handleKeyPress}
             getStats={this.getStats}
+            getContext={this.getContext}
             />
           <div className="initial-input">
             <form id="initial-input-form" onSubmit={this.handleSubmit}>
               <input onChange={this.handleInitialChange} className="blinking" type="text" maxLength="3"/>
             </form>
           </div>
-            <div className="top-ten-scores">
-            </div>
           <div className="gameOver">
             <p>Game Over</p>
           </div>
