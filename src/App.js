@@ -20,17 +20,38 @@ class App extends Component {
   state = {
     play: false,
     pause: true,
-    stop: false
+    stop: false,
+    statData: [],
+    initials: '',
+    line: 0,
+    score: 0
+
   }
+
+  componentDidMount() {
+    // this.getUserData()
+  }
+
+  // getUserData = () => {
+  //   return fetch(`http://${window.location.hostname}:9000/api/v1/stats`)
+  //     .then(res => res.json())
+  //     .then(statData => {
+  //       this.setState({
+  //         statData: statData
+  //       })
+  //     })
+  //   }
 
   play = () => {
     this.setState ({
       play: true,
       pause: false
     })
+    this.audio.loop = true;
     this.audio.play()
   }
 
+  // stops music from playing
   stop = () => {
     this.setState({
       play: false,
@@ -56,17 +77,55 @@ class App extends Component {
     })
     this.audio.pause()
   }
-
+  // falling tetris piece sound.
   playFall = () => {
     this.placedAudio.play()
   }
+
+  // gets the game score and line clear count form state of CanvasDrawing
+  getStats = (stats) => {
+    // console.log('in app',stats.line);
+    this.setState({
+      line: stats.line,
+      score: stats.score
+    })
+  }
+
+  handleInitialChange = (e) => {
+    // console.log(e.target.value);
+    this.setState({
+      initials: e.target.value
+    })
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault()
+    // console.log('hi', this.state);
+    fetch(`http://${window.location.hostname}:9000/api/v1/stats`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        initials: this.state.initials.toUpperCase(),
+        high_score: this.state.score,
+        line_clear: this.state.line
+      })
+    })
+    document.getElementById('initial-input-form').reset()
+    document.querySelector('.initial-input').style.visibility = "hidden"
+    document.querySelector('.gameOver').style.visibility = "hidden"
+    // clear board here.
+    document.querySelector('.leaderboard').style.visibility = "visible"
+  } // end of handleSubmit
 
 
   render() {
     return (
         <div className="App">
           <CanvasDrawing
-            music={this.state}
+            state={this.state}
             play={this.play}
             pause={this.pauseTheme}
             stopMusic={this.stop}
@@ -74,10 +133,17 @@ class App extends Component {
             playFallSound={this.playFall}
             gameOverSound={this.gameOverSoundHandler}
             handleKeyPress={this.handleKeyPress}
+            getStats={this.getStats}
+            getContext={this.getContext}
             />
-            <div className="gameOver">
-              <p>Game Over</p>
-            </div>
+          <div className="initial-input">
+            <form id="initial-input-form" onSubmit={this.handleSubmit}>
+              <input onChange={this.handleInitialChange} className="blinking" type="text" maxLength="3"/>
+            </form>
+          </div>
+          <div className="gameOver">
+            <p>Game Over</p>
+          </div>
         </div>
     );
   }

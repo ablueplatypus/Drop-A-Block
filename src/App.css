@@ -13,33 +13,12 @@
   box-shadow: 6px 5px 4px #999;
 }
 
- /* #nextpiece {
-   width: 200px;
-  height: 200px;
-  margin: 0;
-  border: 5px solid #00d600;
-}
-*/
-
-#playbutton {
-  /* width: 100px;
-  height: 100px; */
-  cursor: pointer;
-  background-color: white;
-  flex: initial;
-  font-family: Arcade, ZCOOL QingKe HuangYou, Arial, sans-serif;
-  font-size: 45px;
-  padding: 5px 7px 2px;
-  margin-left: 31px;
-  margin-top: 10px;
-}
-
 .menu {
   /* border: solid 3px; */
   flex: initial;
   font-size: 2em;
   margin-left: 0.8rem;
-  margin-top: 18px;
+  margin-top: 40px;
   height: 600px;
   order: 2;
   width:400px;
@@ -52,7 +31,7 @@
   flex: 0 1 auto;
   order: 1;
   position: relative;
-  margin-left: -100px;
+  margin-left: -308px;
 }
 
 .soundbuttons {
@@ -71,11 +50,13 @@
     font-size: 30px;
     font-family: 'Press Start 2p', Arial, sans-serif;
     height: 66px;
-    left: 211px;
+    left: 6px;
     position: relative;
-    top: 261px;
+    top: 285px;
     text-align: center;
+    min-width: 300px;
     width: 305px;
+
 }
 
 .gameOver p {
@@ -83,12 +64,76 @@
   margin-block-start: 20px;
 }
 
+ .initial-input {
+   visibility: hidden;
+   height: 36px;
+   left: 295px;
+   position: relative;
+   top: 240px;
+   text-align: center;
+   min-width: 279px;
+   width: 279px;
+}
+
+.initial-input input {
+  background-color: #000000c4;
+  border-style: dashed;
+  border-width: 3px;
+  border-top-color: #29702b;
+  border-right-color: #1f9f25;
+  border-bottom-color: #229927;
+  border-left-color: #1e3c1f;
+  text-decoration-style: wavy;
+  text-decoration: blink;
+  font-size: 25px;
+  color: red;
+  font-family: 'Press Start 2p', Arial, sans-serif;
+  padding: 7px;
+  outline: none;
+  width: 75px;
+}
+
 .small-margin {
-  margin: 10px;
+  margin: 5px;
+}
+.top-score {
+  height: 20px;
+  font-family: 'Press Start 2p', Arial, sans-serif;
+  position: relative;
+  right: 55px;
+}
+
+.blinking{
+    animation:blinkingText 1.5s infinite;
+}
+@keyframes blinkingText{
+  0%  { color: #ff0000; }
+  50% { color: #ff0000; }
+  100%{ color: transparent; }
+}
+
+.hi-score {
+  font-weight: 700;
+  color: #3fc31f;
+}
+.leaderboard {
+  font-family: 'Press Start 2p', Arial, sans-serif;
+  color: #e2ddb5;
+  position: absolute;
+  text-align: center;
+  top: 60px;
+  right: 0px;
+  font-size: 1rem;
+  visibility: hidden;
+}
+.leaderboard h3 {
+  margin-bottom: 50px;
 }
 
 #click-to-play {
   font-weight: 500;
+  margin-bottom: 20px;
+  margin-top: 1px;
 }
 
 #instructions{
@@ -96,10 +141,68 @@
   text-decoration: underline;
   color: darkblue;
 }
+
+#top-score-list {
+  list-style: none;
+  width: 600px;
+  font-size: 0.8em;
+  display: table;
+  padding: 0px;
+}
+
+#top-score-list li {
+  display: inline;
+}
+
+#high-line {
+  margin-bottom: 13px;
+}
+
 #list {
   font-size: 1.5rem;
   margin-top: 10px;
   padding-left: 25px;
+  margin-bottom: 30px;
+}
+
+#initials {
+  font-weight: 500;
+  color: #3fc31f;
+}
+
+#playbutton {
+  /* width: 100px;
+  height: 100px; */
+  cursor: pointer;
+  background-color: black;
+  flex: initial;
+  font-family: Arcade, ZCOOL QingKe HuangYou, Arial, sans-serif;
+  font-size: 45px;
+  color: green;
+  padding: 5px 7px 2px;
+  margin-left: 30px;
+  margin-top: 10px;
+  border-radius: 10px;
+}
+
+#rank-titles {
+  display: inline;
+  list-style: none;
+  margin: 1px;
+  padding-inline-start: 2px;
+  width: 300px;
+}
+#rank-titles li {
+  padding: 18px;
+  display: inline;
+}
+
+#rank {
+  list-style: none;
+  padding: 0;
+}
+#rank li {
+  padding: 10px;
 }
 
 #score {
@@ -109,5 +212,5 @@
 
 #lines {
   font-weight: 700;
-  color: green;
+  color: #9e00cc;
 }

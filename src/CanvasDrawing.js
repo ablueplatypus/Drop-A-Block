@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 // import InputManager from './InputManager'
-import ScoreMenu from './ScoreMenu'
+import ScoreMenu from './ScoreMenu';
+import Leaderboard from './Leaderboard';
+import { tetromino, colors, BLOCK_SIZE, TETROMINO_BLOCK, BLOCK_OUTLINE} from "./gameAssets";
 
 class CanvasDrawing extends Component {
   constructor(props) {
@@ -15,60 +17,36 @@ class CanvasDrawing extends Component {
     this.currentX = null;
     this.currentY = null;
     this.freezed = null;
-    this.points = 0;
-    this.tetromino = [
-        [1, 1, 1, 1],
-
-        [1, 1, 1, 0,
-         1],
-
-        [ 0, 0, 0, 0,
-          1, 1, 1, 0,
-          0, 0, 1, 0,
-          0, 0, 0, 0],
-
-        [0, 0, 0, 0,
-         0, 1, 1, 0,
-         0, 1, 1, 0,
-         0, 0, 0, 0,],
-
-        [1, 1, 0, 0,
-         0, 1, 1],
-
-        [0, 1, 1, 0,
-         1, 1],
-
-        [0, 1, 0, 0,
-         1, 1, 1]
-    ]
-    this.colors = [
-      'cyan', 'orange', 'blue', 'yellow', 'red', 'green', 'magenta'
-    ];
-
     this.randomPiece = [0,1,2,3,4,5,6]
-    // console.log(this.props.stopMusic);
   } // end of contructor.
 
   state = {
-    worldWidth: 300,
-    worldHeight: 600,
-    playing: false,
     context: null,
+    lineCnt: 0,
     loopMusic: true,
     nextpiece: [],
-    lineCnt: 0,
+    playing: false,
     score: 0,
-
-    // selectedSound: 'place'
-    // input: new InputManager(),
+    statData: [],
+    worldWidth: 300,
+    worldHeight: 600,
   }
-
 
   // key presses should update the state of context.
   //tetrominos will not need to be in state because they will not be based off react.
   //they will be located in the constructor function this.
   // will need a funcation that starts the game.
   // the first thing this will do
+
+  getUserData = () => {
+    return fetch(`http://${window.location.hostname}:9000/api/v1/stats`)
+      .then(res => res.json())
+      .then(statData => {
+        this.setState({
+          statData: statData
+        }/*,() => console.log(this.state.statData)*/)
+      })
+    }
 
   componentDidMount() {
     // this.state.input.bindKeys();
@@ -89,11 +67,13 @@ class CanvasDrawing extends Component {
       };
       if (typeof keys[e.keyCode] != undefined) {
         // console.log(typeof keys[e.keyCode]);
-          this.keyPress(keys[e.keyCode]);
+          if (this.state.playing)
+            this.keyPress(keys[e.keyCode]);
           // render();
       }
     }
-
+    this.getUserData()  // fetching for the stat data.
+    this.passUpStats()  // passing up state of scores to App.
     requestAnimationFrame(()=>{this.update()})
   }
 
@@ -105,25 +85,18 @@ class CanvasDrawing extends Component {
     requestAnimationFrame(() => {this.update()})
   }
 
-  componentWillUnmount() {
-    // this.state.input.unbindKeys();
-  }
-
   drawBlock = (x, y) => {
     let context = this.state.context
-    context.fillRect(30 * x, 30 * y, 26, 26) // controls the postion (x,y) and the width and height of the tetrominos
+    context.fillRect(BLOCK_SIZE * x, BLOCK_SIZE * y, TETROMINO_BLOCK, TETROMINO_BLOCK) // controls the postion (x,y) and the width and height of the tetrominos
     // context.strokeStyle = '#717171'
-    context.strokeRect(30 * x, 30 * y, 26, 26)
-  }
-
-  keyPressFun = (e) => {
-    console.log(e);
-    // end of document onkeydown.
+    context.strokeRect(BLOCK_SIZE * x, BLOCK_SIZE * y, BLOCK_OUTLINE, BLOCK_OUTLINE)
   }
 
   renderWorld = () => {
     let context = this.state.context
     context.save()
+    // clearing board to black.
+    context.globalAlpha = 1;
     context.clearRect(0,0, 300, 600)
 
     // draws the board with the tetrominos that have been frozen in place.
@@ -131,7 +104,7 @@ class CanvasDrawing extends Component {
     for (let x = 0; x < this.columns; ++x) {
       for (let y = 0; y < this.rows; ++y) {
         if(this.board[y][x]) {
-          context.fillStyle = this.colors[this.board[y][x] - 1]
+          context.fillStyle = colors[this.board[y][x] - 1]
           this.drawBlock(x, y)
         }
       }
@@ -142,7 +115,7 @@ class CanvasDrawing extends Component {
     for (let y = 0; y < 4; y++) {
       for (let x = 0; x < 4; ++x) {
         if (this.currentShape[y][x]) {
-          context.fillStyle = this.colors[this.currentShape[y][x] - 1];
+          context.fillStyle = colors[this.currentShape[y][x] - 1];
           this.drawBlock(this.currentX + x, this.currentY + y)
         }
       }
@@ -166,7 +139,7 @@ class CanvasDrawing extends Component {
         }
     }
   }
-  shuffel(array) {
+  shuffle(array) {
     if (this.randomPiece.length === 0) {
       this.randomPiece = [0,1,2,3,4,5,6]
     }
@@ -180,7 +153,7 @@ class CanvasDrawing extends Component {
   }
 
   newShape() {
-    this.shuffel(this.randomPiece)
+    this.shuffle(this.randomPiece)
     let random = this.randomPiece.pop()
     // console.log(this.randomPiece);
     let nextpiece = this.randomPiece[this.randomPiece.length - 1]
@@ -189,8 +162,7 @@ class CanvasDrawing extends Component {
         nextpiece: nextpiece
       }/*, () => console.log(this.state.nextpiece)*/)
     }
-
-    let shape = this.tetromino[random]; // random for color filling
+    let shape = tetromino[random]; // random for color filling
 
     this.currentShape = [];
     for (let y = 0; y < 4; ++y) {
@@ -217,6 +189,7 @@ class CanvasDrawing extends Component {
   }
 
   valid(offsetX, offsetY, newCurrent=this.currentShape) {
+    let context = this.state.context
     offsetX = offsetX || 0;
     offsetY = offsetY || 0;
     offsetX = this.currentX + offsetX;
@@ -234,13 +207,19 @@ class CanvasDrawing extends Component {
                         this.gameOver = true; // gameOver if the current shape is at the top row
                         this.props.stopMusic()
                         this.props.gameOverSound()
+                        this.passUpStats()
+                        this.getUserData()
                         this.setState ({
                           playing: false
                         })
-                        // console.log(this.board);
+                        console.log(this.state.context);
                         // music can stop here.
+                        context.globalAlpha = .5
+                        context.fillRect(0,0,300,600)
+                        // this.delayScreenClear()
                         document.querySelector('#playbutton').disabled = false;
                         document.querySelector('.gameOver').style.visibility = "visible"
+                        document.querySelector('.initial-input').style.visibility = "visible"
                     }
                     return false;
                 }
@@ -250,7 +229,31 @@ class CanvasDrawing extends Component {
     return true;
   }
 
+
+  calculateScore = (lineCnt) => {
+    switch(lineCnt) {
+      // if line count is x: 1 return 40
+      case 1:
+        return 40
+        break;
+      case 2:
+        return (40 * 2.5)
+        break;
+      case 3:
+        return (100 * 3)
+        break;
+      case 4:
+        return (300 * 4)
+        break;
+      default:
+        return null
+        break;
+    }
+  }
+
   clearLines() {
+    let context = this.state.context
+    let numLinesCleared = 0
     for (let y = this.rows - 1; y >= 0; --y) {
         let rowFilled = true;
       for (let x = 0; x < this.columns; ++x) {
@@ -261,22 +264,24 @@ class CanvasDrawing extends Component {
       }
       // will try to add a red blinking line before cleared.
       if (rowFilled) {
+        console.log(this.board[19]);
+        let filledRow = this.board[19]
+        numLinesCleared += 1
         for (let curRow = y; curRow > 0; --curRow) {
               // console.log(oldrow);
           for (let x = 0; x < this.columns; ++x) {
-                // console.log(board[curRow]);
               this.board[curRow][x] = this.board[curRow - 1][x];
           }
         }
-          this.setState({
-            lineCnt: this.state.lineCnt + 1,
-            score: this.state.score + 40
-          })
           // put sound for line clear here!
           this.props.lineClearSound()
           ++y;
       } // end of if rowFilled
-    } // end of first for loop
+    }
+    this.setState({
+      lineCnt: this.state.lineCnt + numLinesCleared,
+      score: this.state.score + this.calculateScore(numLinesCleared)
+    }) // end of first for loop
   }
 
   canMove = () => {
@@ -363,7 +368,9 @@ class CanvasDrawing extends Component {
     // it will also fire other funcations that will allow the tetrominos to start falling.
     // console.log('In Start Game', this.state.startGame);
     this.setState({
-      playing: true
+      playing: true,
+      score: 0,
+      lineCnt: 0
     }/*,() => console.log(this.state)*/)
     this.intervalRender = setInterval(this.renderWorld, 30);
     this.clearBoard();
@@ -375,26 +382,58 @@ class CanvasDrawing extends Component {
   }
 
 
-/************************Click Handler********************************/
+/************************* Click Handler ********************************/
   playGameHandler = () => {
     // console.log('in playGameHandler');
     this.startGame();
     this.props.play()
     document.querySelector('.gameOver').style.visibility = "hidden"
+    document.querySelector('.initial-input').style.visibility = "hidden"
+    document.querySelector('.leaderboard').style.visibility = "hidden"
     document.querySelector('#playbutton').disabled = true
   }
-/*********************************************************************/
-// handleKeyPress = (event) => {
-//   // console.log(event);
-//   console.log('hello from handleKeyPress');
-// }
+/**********************************************************************/
+
+/************************* Score Logic *********************************/
+  sortScore = () => {
+    let sorted = this.state.statData.sort((a,b) => {
+      return b.high_score - a.high_score
+    })
+    return sorted
+  }
+
+  topScore = () => {
+    return this.sortScore()[0]
+  }
+
+  topTen = () => {
+    return this.sortScore().slice(0,10)
+  }
+
+  passUpStats = () => {
+    let stats = {
+      line: this.state.lineCnt,
+      score: this.state.score
+    }
+    // console.log(stats);
+    this.props.getStats(stats)
+  }
+
+/**********************************************************************/
 
   render() {
     return (
       <React.Fragment>
-        <ScoreMenu state={this.state}/>
+        <ScoreMenu state={this.state} appState={this.props.state}/>
         <div className="tetris" onKeyDown={(e) => console.log(e.key)}>
-          <br/>
+          <div className="top-score">
+            <ul id="top-score-list">
+              <li>Initial:<span id="initials">{this.topScore() ? this.topScore().initials : '###'}</span></li>
+              <li id="high-score"> High Score:<span className="hi-score">{this.topScore() ? this.topScore().high_score : "0"}</span></li>
+              <li id="high-line"> Lines:<span className="hi-score">{this.topScore() ? this.topScore().line_clear : "0"}</span></li>
+            </ul>
+          </div>
+          <Leaderboard scores={this.topTen() ? this.topTen() : null} />
           <canvas id="world" ref="canvas" width={this.state.worldWidth} height={this.state.worldHeight}></canvas>
           <button id="playbutton" onClick={() => this.playGameHandler()}>Play Tetris!</button>
           <button className="soundbuttons" onClick={() => this.props.play()}>Start Music</button>
