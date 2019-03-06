@@ -22,24 +22,25 @@ class App extends Component {
     pause: true,
     stop: false,
     statData: [],
-    initials: ''
-
+    initials: '',
+    line: 0,
+    score: 0
 
   }
 
   componentDidMount() {
-    this.getUserData()
+    // this.getUserData()
   }
 
-  getUserData = () => {
-    return fetch('http://localhost:9000/api/v1/stats')
-      .then(res => res.json())
-      .then(statData => {
-        this.setState({
-          statData: statData
-        })
-      })
-    }
+  // getUserData = () => {
+  //   return fetch(`http://${window.location.hostname}:9000/api/v1/stats`)
+  //     .then(res => res.json())
+  //     .then(statData => {
+  //       this.setState({
+  //         statData: statData
+  //       })
+  //     })
+  //   }
 
   play = () => {
     this.setState ({
@@ -50,6 +51,7 @@ class App extends Component {
     this.audio.play()
   }
 
+  // stops music from playing
   stop = () => {
     this.setState({
       play: false,
@@ -75,14 +77,19 @@ class App extends Component {
     })
     this.audio.pause()
   }
-
+  // falling tetris piece sound.
   playFall = () => {
     this.placedAudio.play()
   }
 
+  // gets the game score and line clear count form state of CanvasDrawing
   getStats = (stats) => {
-    console.log(stats);
-    return stats
+    console.log('in app',stats.line);
+    this.setState({
+      line: stats.line,
+      score: stats.score
+    })
+
   }
 
   handleInitialChange = (e) => {
@@ -94,26 +101,28 @@ class App extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault()
-    console.log(this.getStats());
-    // fetch('http://localhost:9000/api/v1/stats', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Accept': 'application/json'
-    //   },
-    //   body: JSON.stringify({
-    //     initials: this.state.initials,
-    //     high_score: this.getStats().line,
-    //     line_clear: this.getStats().score
-    //   })
-    // })
-    // document.querySelector("#initial-input").reset()
+    // console.log('hi', this.state);
+    fetch(`http://${window.location.hostname}:9000/api/v1/stats`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        initials: this.state.initials,
+        high_score: this.state.score,
+        line_clear: this.state.line
+      })
+    })
+    document.getElementById('initial-input-form').reset()
+    document.querySelector('.initial-input').style.visibility = "hidden"
+    document.querySelector('.gameOver').style.visibility = "hidden"
+    // document.querySelector('.')
   } // end of handleSubmit
 
 
   render() {
     // debugger
-    this.getStats()
     return (
         <div className="App">
           <CanvasDrawing
@@ -127,17 +136,16 @@ class App extends Component {
             handleKeyPress={this.handleKeyPress}
             getStats={this.getStats}
             />
-              <div className="initial-input">
-                <form id="inital-input-form" onSubmit={this.handleSubmit}>
-                  <input onChange={this.handleInitialChange} className="blinking" type="text" maxLength="3"/>
-                </form>
-              </div>
-                <div className="top-ten-scores">
-                </div>
-              <div className="gameOver">
-                <p>Game Over</p>
-              </div>
-
+          <div className="initial-input">
+            <form id="initial-input-form" onSubmit={this.handleSubmit}>
+              <input onChange={this.handleInitialChange} className="blinking" type="text" maxLength="3"/>
+            </form>
+          </div>
+            <div className="top-ten-scores">
+            </div>
+          <div className="gameOver">
+            <p>Game Over</p>
+          </div>
         </div>
     );
   }

@@ -76,7 +76,7 @@
 }
 
 .initial-input input {
-  background-color: black;
+  background-color: #000000c4;
   border-style: dashed;
   border-width: 3px;
   border-top-color: #29702b;
@@ -96,7 +96,7 @@
 .small-margin {
   margin: 5px;
 }
-.leaderboard {
+.top-score {
   height: 20px;
   font-family: 'Press Start 2p', Arial, sans-serif;
   position: relative;
@@ -118,6 +118,15 @@
   font-weight: 700;
   color: #3fc31f;
 }
+.leaderboard {
+  font-family: 'Press Start 2p', Arial, sans-serif;
+  color: red;
+  position: absolute;
+  visibility: hidden;
+  text-align: center;
+  left: 55px;
+  top: 60px;
+}
 
 #click-to-play {
   font-weight: 500;
@@ -131,7 +140,7 @@
   color: darkblue;
 }
 
-#leaderboard-list {
+#top-score-list {
   list-style: none;
   width: 600px;
   font-size: 0.8em;
@@ -139,7 +148,7 @@
   padding: 0px;
 }
 
-#leaderboard-list li {
+#top-score-list li {
   display: inline;
 }
 
@@ -159,6 +168,10 @@
   color: #3fc31f;
 }
 
+#initial-list {
+  list-style: none;
+}
+
 #playbutton {
   /* width: 100px;
   height: 100px; */
@@ -172,6 +185,18 @@
   margin-left: 30px;
   margin-top: 10px;
   border-radius: 10px;
+}
+
+#rank {
+  list-style: none;
+}
+
+#score-list {
+  list-style: none;
+}
+
+#score-list li {
+  padding: 10px;
 }
 
 #score {

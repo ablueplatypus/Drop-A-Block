@@ -17,26 +17,22 @@ class CanvasDrawing extends Component {
     this.currentY = null;
     this.freezed = null;
     this.points = 0;
-    this.tetromino = tetromino
     this.colors = colors
-    this.randomPiece = [0,1,2,3,4,5,6]
   } // end of contructor.
 
   state = {
-    worldWidth: 300,
-    worldHeight: 600,
-    playing: false,
     context: null,
+    lineCnt: 0,
     loopMusic: true,
     nextpiece: [],
-    lineCnt: 0,
+    playing: false,
     score: 0,
-
+    statData: [],
+    worldWidth: 300,
+    worldHeight: 600,
     // selectedSound: 'place'
     // input: new InputManager(),
   }
-
-
 
   // key presses should update the state of context.
   //tetrominos will not need to be in state because they will not be based off react.
@@ -68,9 +64,20 @@ class CanvasDrawing extends Component {
           // render();
       }
     }
+    this.getUserData()
     this.passUpStats() // passing up state of scores to App.
     requestAnimationFrame(()=>{this.update()})
   }
+
+  getUserData = () => {
+    return fetch(`http://${window.location.hostname}:9000/api/v1/stats`)
+      .then(res => res.json())
+      .then(statData => {
+        this.setState({
+          statData: statData
+        },() => console.log(this.state.statData))
+      })
+    }
 
   update = () => {
     // console.log(this.state.input.pressedKeys)
@@ -210,6 +217,8 @@ class CanvasDrawing extends Component {
                         this.gameOver = true; // gameOver if the current shape is at the top row
                         this.props.stopMusic()
                         this.props.gameOverSound()
+                        this.passUpStats()
+                        this.getUserData()
                         this.setState ({
                           playing: false
                         })
@@ -391,7 +400,7 @@ class CanvasDrawing extends Component {
 /*********************************************************************/
 
   sortScore = () => {
-    let sorted = this.props.state.statData.sort((a,b) => {
+    let sorted = this.state.statData.sort((a,b) => {
       return b.high_score - a.high_score
     })
     return sorted
@@ -401,26 +410,33 @@ class CanvasDrawing extends Component {
     return this.sortScore()[0]
   }
 
+  topTen = () => {
+    return this.sortScore().slice(0,10)
+  }
+
   passUpStats = () => {
     let stats = {
       line: this.state.lineCnt,
       score: this.state.score
     }
+    console.log(stats);
     this.props.getStats(stats)
   }
+
 
   render() {
     return (
       <React.Fragment>
         <ScoreMenu state={this.state} appState={this.props.state}/>
         <div className="tetris" onKeyDown={(e) => console.log(e.key)}>
-          <div className="leaderboard">
-            <ul id="leaderboard-list">
-              <li>Initial:<span id="initials">{this.topScore() ? this.topScore().initials : 'name'}</span></li>
+          <div className="top-score">
+            <ul id="top-score-list">
+              <li>Initial:<span id="initials">{this.topScore() ? this.topScore().initials : '###'}</span></li>
               <li id="high-score"> High Score:<span className="hi-score">{this.topScore() ? this.topScore().high_score : "0"}</span></li>
               <li id="high-line"> Lines:<span className="hi-score">{this.topScore() ? this.topScore().line_clear : "0"}</span></li>
             </ul>
           </div>
+          <Leaderboard scores={this.topTen() ? this.topTen() : null} />
           <canvas id="world" ref="canvas" width={this.state.worldWidth} height={this.state.worldHeight}></canvas>
           <button id="playbutton" onClick={() => this.playGameHandler()}>Play Tetris!</button>
           <button className="soundbuttons" onClick={() => this.props.play()}>Start Music</button>
