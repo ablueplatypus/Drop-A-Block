@@ -24,6 +24,7 @@ class CanvasDrawing extends Component {
     context: null,
     lineCnt: 0,
     loopMusic: true,
+    filledRow: false,
     nextpiece: [],
     playing: false,
     score: 0,
@@ -108,8 +109,8 @@ class CanvasDrawing extends Component {
   renderWorld = () => {
     let context = this.state.context
     context.save()
-    // clearing board to black.
     context.globalAlpha = 1;
+    // clearing board to black.
     context.clearRect(0,0, 300, 600)
     // this.drawBoard()
 
@@ -278,8 +279,10 @@ class CanvasDrawing extends Component {
       }
       // will try to add a red blinking line before cleared.
       if (rowFilled) {
-        console.log(this.board[19]);
         let filledRow = this.board[19]
+        this.setState({
+          filledRow: true
+        })
         numLinesCleared += 1
         for (let curRow = y; curRow > 0; --curRow) {
               // console.log(oldrow);

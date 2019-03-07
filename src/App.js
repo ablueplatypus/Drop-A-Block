@@ -126,7 +126,7 @@ class App extends Component {
 
 
   getUserData = () => {
-    console.log("Fetching user data")
+    // console.log("Fetching user data")
     return fetch(`http://${window.location.hostname}:9000/api/v1/stats`)
       .then(res => res.json())
       .then(statData => {
