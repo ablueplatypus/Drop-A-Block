@@ -22,6 +22,7 @@ class CanvasDrawing extends Component {
 
   state = {
     context: null,
+    fullRow: false,
     lineCnt: 0,
     loopMusic: true,
     nextpiece: [],
@@ -120,6 +121,12 @@ class CanvasDrawing extends Component {
         if(this.board[y][x]) {
           context.fillStyle = colors[this.board[y][x] - 1]
           this.drawBlock(x, y)
+        }
+        if(this.state.filledRow) {
+          console.log('hello');
+          context.fillStyle = 'red'[this.board[y][x]-1]
+          context.fillStyle = 'white'[this.board[y][x]-1]
+          this.drawBlock(x,y)
         }
       }
     }
@@ -278,19 +285,27 @@ class CanvasDrawing extends Component {
       }
       // will try to add a red blinking line before cleared.
       if (rowFilled) {
-        console.log(this.board[19]);
+        // getting a full row and saving it to state.
         let filledRow = this.board[19]
+        this.setState ({
+          filledRow: true
+        },console.log(this.state.filledRow))
         numLinesCleared += 1
-        for (let curRow = y; curRow > 0; --curRow) {
-              // console.log(oldrow);
-          for (let x = 0; x < this.columns; ++x) {
-              this.board[curRow][x] = this.board[curRow - 1][x];
+        setTimeout(() => {
+          for (let curRow = y; curRow > 0; --curRow) {
+                // console.log(oldrow);
+            for (let x = 0; x < this.columns; ++x) {
+                this.board[curRow][x] = this.board[curRow - 1][x];
+            }
           }
-        }
-          // put sound for line clear here!
-          this.props.lineClearSound()
-          ++y;
-      } // end of if rowFilled
+            // put sound for line clear here!
+            this.props.lineClearSound()
+            ++y;
+          }, 300)
+          this.setState ({
+            filledRow: false
+          },console.log(this.state.filledRow))
+        } // end of if rowFilled
     }
     this.setState({
       lineCnt: this.state.lineCnt + numLinesCleared,

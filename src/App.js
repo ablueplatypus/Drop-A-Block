@@ -28,9 +28,9 @@ class App extends Component {
 
   }
 
-  componentDidMount() {
-    // this.getUserData()
-  }
+  // componentDidMount() {
+  //   // this.getUserData()
+  // }
 
   // getUserData = () => {
   //   return fetch(`http://${window.location.hostname}:9000/api/v1/stats`)
@@ -41,6 +41,7 @@ class App extends Component {
   //       })
   //     })
   //   }
+
 
   play = () => {
     this.setState ({
@@ -126,7 +127,7 @@ class App extends Component {
 
 
   getUserData = () => {
-    console.log("Fetching user data")
+    // console.log("Fetching user data")
     return fetch(`http://${window.location.hostname}:9000/api/v1/stats`)
       .then(res => res.json())
       .then(statData => {
