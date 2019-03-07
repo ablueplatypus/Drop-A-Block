@@ -112,13 +112,29 @@ class App extends Component {
         high_score: this.state.score,
         line_clear: this.state.line
       })
-    })
+    }).then(
+      setTimeout(()=>{
+        this.getUserData()
+      }, 50)
+    )
     document.getElementById('initial-input-form').reset()
     document.querySelector('.initial-input').style.visibility = "hidden"
     document.querySelector('.gameOver').style.visibility = "hidden"
     // clear board here.
     document.querySelector('.leaderboard').style.visibility = "visible"
   } // end of handleSubmit
+
+
+  getUserData = () => {
+    console.log("Fetching user data")
+    return fetch(`http://${window.location.hostname}:9000/api/v1/stats`)
+      .then(res => res.json())
+      .then(statData => {
+        this.setState({
+          statData: statData
+        }/*,() => console.log(this.state.statData)*/)
+      })
+    }
 
 
   render() {
@@ -135,13 +151,15 @@ class App extends Component {
             handleKeyPress={this.handleKeyPress}
             getStats={this.getStats}
             getContext={this.getContext}
+            statData={this.state.statData}
+            getUserData={this.getUserData}
             />
           <div className="initial-input">
             <form id="initial-input-form" onSubmit={this.handleSubmit}>
-              <input onChange={this.handleInitialChange} className="blinking" type="text" maxLength="3"/>
+              <input onChange={this.handleInitialChange} className="blinking" type="text" maxLength="3" placeholder="Enter Initials"/>
             </form>
           </div>
-          <div className="gameOver">
+          <div className="gameOver blinking-game-over">
             <p>Game Over</p>
           </div>
         </div>

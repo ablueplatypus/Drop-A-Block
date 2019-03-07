@@ -47,10 +47,12 @@ class ScoreMenu extends Component {
           <p className="small-margin">Lines Cleared:
             <span id="lines"> {this.props.state.lineCnt}</span>
           </p>
+          <div id="next-piece">
             <p className="small-margin">
               Next Piece:
             </p>
-            <canvas ref="canvas" id="next-piece" width={200} height={200} style={{margin: 0}}></canvas>
+            <canvas ref="canvas" width={200} height={200} style={{margin: 0}}></canvas>
+          </div>
         </div>
       </React.Fragment>
     )

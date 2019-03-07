@@ -38,16 +38,6 @@ class CanvasDrawing extends Component {
   // will need a funcation that starts the game.
   // the first thing this will do
 
-  getUserData = () => {
-    return fetch(`http://${window.location.hostname}:9000/api/v1/stats`)
-      .then(res => res.json())
-      .then(statData => {
-        this.setState({
-          statData: statData
-        }/*,() => console.log(this.state.statData)*/)
-      })
-    }
-
   componentDidMount() {
     // this.state.input.bindKeys();
     const context = this.refs.canvas.getContext('2d')
@@ -71,8 +61,9 @@ class CanvasDrawing extends Component {
             this.keyPress(keys[e.keyCode]);
           // render();
       }
-    }
-    this.getUserData()  // fetching for the stat data.
+    } // end of key press handler
+
+    this.props.getUserData()  // fetching for the stat data.
     this.passUpStats()  // passing up state of scores to App.
     requestAnimationFrame(()=>{this.update()})
   }
@@ -84,6 +75,28 @@ class CanvasDrawing extends Component {
     }
     requestAnimationFrame(() => {this.update()})
   }
+
+  // fix Grid maybe implement?
+  // drawBoard = () => {
+  //   let context = this.state.context
+  //   let bw = 300;
+  //   let bh = 600;
+  //   let p = 0;
+  //   // let cw = bw + (p*2) + 1;
+  //   // let ch = bh + (p*2) + 1;
+  //       for (let x = 0; x <= bw; x += 29) {
+  //           context.moveTo(0.5 + x + p, p);
+  //           context.lineTo(0.5 + x + p, bh + p);
+  //       }
+  //
+  //       // for (let x = 0; x <= bh; x += 28) {
+  //       //     context.moveTo(p, 0.5 + x + p);
+  //       //     context.lineTo(bw + p, 0.5 + x + p);
+  //       // }
+  //
+  //       context.strokeStyle = "#9e9e9e78";
+  //       context.stroke();
+  //   }
 
   drawBlock = (x, y) => {
     let context = this.state.context
@@ -98,6 +111,7 @@ class CanvasDrawing extends Component {
     // clearing board to black.
     context.globalAlpha = 1;
     context.clearRect(0,0, 300, 600)
+    // this.drawBoard()
 
     // draws the board with the tetrominos that have been frozen in place.
     context.strokeStyle = 'black'
@@ -208,11 +222,11 @@ class CanvasDrawing extends Component {
                         this.props.stopMusic()
                         this.props.gameOverSound()
                         this.passUpStats()
-                        this.getUserData()
+                        this.props.getUserData()
                         this.setState ({
                           playing: false
                         })
-                        console.log(this.state.context);
+                        // console.log(this.state.context);
                         // music can stop here.
                         context.globalAlpha = .5
                         context.fillRect(0,0,300,600)
@@ -396,7 +410,7 @@ class CanvasDrawing extends Component {
 
 /************************* Score Logic *********************************/
   sortScore = () => {
-    let sorted = this.state.statData.sort((a,b) => {
+    let sorted = this.props.statData.sort((a,b) => {
       return b.high_score - a.high_score
     })
     return sorted
