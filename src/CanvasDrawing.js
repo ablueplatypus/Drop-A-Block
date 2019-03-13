@@ -452,7 +452,7 @@ class CanvasDrawing extends Component {
           </div>
           <Leaderboard scores={this.topTen() ? this.topTen() : null} />
           <canvas id="world" ref="canvas" width={this.state.worldWidth} height={this.state.worldHeight}></canvas>
-          <button id="playbutton" onClick={() => this.playGameHandler()}>Play Tetris!</button>
+          <button id="playbutton" onClick={() => this.playGameHandler()}>Play Drop A Block!</button>
           <button className="soundbuttons" onClick={() => this.props.play()}>Start Music</button>
           <button className="soundbuttons" onClick={(e) => this.props.pause(e)}>Pause Music</button>
         </div>
