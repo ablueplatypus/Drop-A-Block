@@ -1,3 +1,4 @@
+// Not currently used. 
 const KEY = {
 	  LEFT:  37,
 	  RIGHT: 39,
