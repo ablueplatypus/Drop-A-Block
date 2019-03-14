@@ -23,7 +23,7 @@ class ScoreMenu extends Component {
     context.clearRect(0,0,200,200)
   }
   update = () => {
-    if(this.props.state.playing){
+    if(this.props.state.playing) {
 
     }
     requestAnimationFrame(() => {this.update()})
@@ -33,7 +33,7 @@ class ScoreMenu extends Component {
     return (
       <React.Fragment>
         <div className="menu">
-          <p id="click-to-play">Click Play Drop A Bloack button to Start!
+          <p id="click-to-play">Click Play Drop A Block button to Start!
           </p>
             <p id="instructions">Controls:</p>
               <ul id="list">
