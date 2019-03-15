@@ -279,7 +279,7 @@ class CanvasDrawing extends Component {
       }
       // will try to add a red blinking line before cleared.
       if (rowFilled) {
-        let filledRow = this.board[19]
+        // let filledRow = this.board[19]
         this.setState({
           filledRow: true
         })

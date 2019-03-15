@@ -101,7 +101,7 @@ class App extends Component {
   handleSubmit = (e) => {
     e.preventDefault()
     // console.log('hi', this.state);
-    fetch(`https://drop-a-block-backend.herokuapp.com/`, {
+    fetch(`http://${window.location.hostname}:9000/api/v1/stats`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ class App extends Component {
 
   getUserData = () => {
     // console.log("Fetching user data")
-    return fetch(`https://drop-a-block-backend.herokuapp.com/`)
+    return fetch(`http://${window.location.hostname}:9000/api/v1/stats`)
       .then(res => res.json())
       .then(statData => {
         this.setState({
