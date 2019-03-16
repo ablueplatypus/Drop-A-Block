@@ -250,19 +250,15 @@ class CanvasDrawing extends Component {
       // if line count is x: 1 return 40
       case 1:
         return 40
-        break;
+        // dont need a break because the swtich ends after the return. 
       case 2:
         return (40 * 2.5)
-        break;
       case 3:
         return (100 * 3)
-        break;
       case 4:
         return (300 * 4)
-        break;
       default:
         return null
-        break;
     }
   }
 
@@ -279,7 +275,7 @@ class CanvasDrawing extends Component {
       }
       // will try to add a red blinking line before cleared.
       if (rowFilled) {
-        let filledRow = this.board[19]
+        // let filledRow = this.board[19]
         this.setState({
           filledRow: true
         })
@@ -315,6 +311,7 @@ class CanvasDrawing extends Component {
         }
         this.newShape();
     }
+    //this.intervial = setime out can
   }
 
   freeze() {
@@ -393,6 +390,7 @@ class CanvasDrawing extends Component {
     this.clearBoard();
     this.newShape();
     this.gameOver = false;
+    //switch function to set timeout .
     this.interval = setInterval(this.canMove, 500);
     // console.log(this.intervalRender, this.interval);
     // console.log(this.board);
@@ -452,7 +450,7 @@ class CanvasDrawing extends Component {
           </div>
           <Leaderboard scores={this.topTen() ? this.topTen() : null} />
           <canvas id="world" ref="canvas" width={this.state.worldWidth} height={this.state.worldHeight}></canvas>
-          <button id="playbutton" onClick={() => this.playGameHandler()}>Play Tetris!</button>
+          <button id="playbutton" onClick={() => this.playGameHandler()}>Play Drop A Block!</button>
           <button className="soundbuttons" onClick={() => this.props.play()}>Start Music</button>
           <button className="soundbuttons" onClick={(e) => this.props.pause(e)}>Pause Music</button>
         </div>
