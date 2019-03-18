@@ -250,19 +250,14 @@ class CanvasDrawing extends Component {
       // if line count is x: 1 return 40
       case 1:
         return 40
-        break;
       case 2:
         return (40 * 2.5)
-        break;
       case 3:
         return (100 * 3)
-        break;
       case 4:
         return (300 * 4)
-        break;
       default:
         return null
-        break;
     }
   }
 
