@@ -25,7 +25,7 @@ class CanvasDrawing extends Component {
     lineCnt: 0,
     loopMusic: true,
     filledRow: false,
-    nextpiece: [],
+    nextpiece: null,
     playing: false,
     score: 0,
     statData: [],
@@ -155,28 +155,38 @@ class CanvasDrawing extends Component {
     }
   }
   shuffle(array) {
-    if (this.randomPiece.length === 0) {
-      this.randomPiece = [0,1,2,3,4,5,6]
-    }
     for (let i = array.length - 1; i > 0; i--) {
        let j = Math.floor(Math.random() * (i + 1));
        // debugger
        [array[i], array[j]] = [array[j], array[i]]
     }
-    // console.log(array);
+    console.log(array);
     return array
   }
 
-  newShape() {
-    this.shuffle(this.randomPiece)
-    let random = this.randomPiece.pop()
-    // console.log(this.randomPiece);
+  nextPiece() {
     let nextpiece = this.randomPiece[this.randomPiece.length - 1]
     if (nextpiece !== undefined) {
       this.setState({
         nextpiece: nextpiece
-      }/*, () => console.log(this.state.nextpiece)*/)
+      }, () => console.log(this.state.nextpiece))
     }
+  }
+
+  newShape() {
+    if (this.randomPiece.length === 0) {
+      this.randomPiece = [0,1,2,3,4,5,6]
+      this.shuffle(this.randomPiece)
+      // console.log(this.randomPiece)
+    }
+    let random = this.randomPiece.pop()
+    // console.log(this.randomPiece);
+    // let nextpiece = this.randomPiece[this.randomPiece.length - 1]
+    // if (nextpiece !== undefined) {
+    //   this.setState({
+    //     nextpiece: nextpiece
+    //   }, () => console.log(this.state.nextpiece))
+    // }
     let shape = tetromino[random]; // random for color filling
 
     this.currentShape = [];
@@ -197,6 +207,7 @@ class CanvasDrawing extends Component {
     }
     // console.log(currenst);
     // new tetromino starts to move
+    this.nextPiece()
     this.freezed = false;
     // position where the shape will spawn on canvas
     this.currentX = 4;

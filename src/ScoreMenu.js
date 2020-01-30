@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { tetromino, colors, BLOCK_SIZE, TETROMINO_BLOCK, BLOCK_OUTLINE} from "./gameAssets";
 
 
 class ScoreMenu extends Component {
@@ -10,7 +11,7 @@ class ScoreMenu extends Component {
   componentDidMount() {
     const context = this.refs.canvas.getContext('2d')
     this.setState({context: context})
-    context.fillStyle = "cyan"
+    // context.fillStyle = "cyan"
     // context.fillRect(85, 20, 30, 30)
     // context.fillRect(85, 55, 30, 30)
     // context.fillRect(85, 90, 30, 30)
@@ -21,7 +22,9 @@ class ScoreMenu extends Component {
     let context = this.state.context
     context.save()
     context.clearRect(0,0,200,200)
+
   }
+
   update = () => {
     if(this.props.state.playing) {
 
@@ -30,6 +33,7 @@ class ScoreMenu extends Component {
   }
 
   render() {
+    console.log(this.props.state.nextpiece)
     return (
       <React.Fragment>
         <div className="menu">
