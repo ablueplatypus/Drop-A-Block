@@ -2,6 +2,7 @@ const BLOCK_SIZE = 30;
 const TETROMINO_BLOCK = 25;
 const BLOCK_OUTLINE = 25;
 
+
 const tetromino = [
     [1, 1, 1, 1],
 

@@ -14,7 +14,12 @@ This is a very good tutorial on building Tetris in vanilla JS with canvas. https
 
 
 ##How to run app  
- The application is using a Ruby on Rails backend to store the high scores, line count, and initials. You will need to download that repository as well and change the fetch request to corresponding address to have the application fully functional.
- 
+ The application is using a Ruby on Rails backend to store the high scores, line count, and initials. You will need to download the backend repository as well and change the fetch request to corresponding address to have the application fully functional.
+
  npm install  
  npm start
+
+Alternatively:
+
+yarn install
+yarn start
