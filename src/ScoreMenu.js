@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { tetromino, colors, BLOCK_SIZE, TETROMINO_BLOCK, BLOCK_OUTLINE} from "./gameAssets";
+import { tetromino, colors, HEIGHT_WIDTH, NEXTSHAPE_SIZE} from "./gameAssets";
 
 
 class ScoreMenu extends Component {
@@ -43,9 +43,33 @@ class ScoreMenu extends Component {
   }
 
 
+  updateColor = (tetromino) => {
+    let context = this.state.context
+    switch (tetromino) {
+      case 0:
+        return context.fillStyle = colors[0]
+      case 1:
+        return context.fillStyle = colors[1]
+      case 2:
+        return context.fillStyle = colors[2]
+      case 3:
+        return context.fillStyle = colors[3]
+      case 4:
+        return context.fillStyle = colors[4]
+      case 5:
+        return context.fillStyle = colors[5]
+      case 6:
+        return context.fillStyle = colors[6]
+        break;
+      default:
+        return "something went wrong"
+    }
+  }
+
+
   renderNextTetromino = () => {
 
-    console.log('nextpiece', this.props.state.nextpiece, 'tetris' , tetromino);
+    // console.log('nextpiece', this.props.state.nextpiece, 'tetris' , tetromino);
     let context = this.state.context
     context.save()
     context.clearRect(0,0,200,200)
@@ -56,7 +80,7 @@ class ScoreMenu extends Component {
     for (let y = 0; y < 4; ++y) {
         this.nextShape[y] = [];
         for (let x = 0; x < 4; ++x) {
-          console.log('currentshape', this.nextShape)
+          // console.log('currentshape', this.nextShape)
             let i = 4 * y + x;
             if (typeof shape[i] != undefined && shape[i]) {
                 this.nextShape[y][x] = 0 + 1
@@ -68,21 +92,21 @@ class ScoreMenu extends Component {
         // debugger
     }
 
-
-    context.fillStyle = 'red';
-    context.strokeStyle = 'blue';
-    for (let y = 0; y < 4; y++) {
+    context.fillStyle = 'gray';
+    context.strokeStyle = 'black';
+    for (let y = 0; y < 4; ++y) {
       for (let x = 0; x < 4; ++x) {
-        console.log('testing')
-        // context.fillRect(85, 30 ,30, 30 )
-        // console.log(this.props.state.nextpiece)
-        // if (this.props.state.nextpiece[y][x]) {
-        //   context.fillStyle = colors[this.this.props.state.nextpiece[y][x] - 1];
-        //   this.props.drawBlock(this.currentX + x, this.currentY + y)
-        // }
+        // console.log('testing', this.nextShape)
+        if(this.nextShape[y][x]) {
+          this.updateColor(this.props.state.nextpiece)
+          context.fillRect(NEXTSHAPE_SIZE * x + 40, NEXTSHAPE_SIZE * y + 50, HEIGHT_WIDTH, HEIGHT_WIDTH)
+          context.strokeRect(NEXTSHAPE_SIZE * x + 40, NEXTSHAPE_SIZE * y + 50,  HEIGHT_WIDTH, HEIGHT_WIDTH)
+        }
       }
     }
   }
+
+
 
   // update = () => {
   //   if(this.props.state.playing) {
