@@ -29,6 +29,7 @@ class CanvasDrawing extends Component {
     filledRow: false,
     nextpiece: null,
     playing: false,
+    pause: false,
     score: 0,
     statData: [],
     worldWidth: 300,
@@ -140,7 +141,7 @@ class CanvasDrawing extends Component {
       }
     }
     context.restore()
-    // console.log(this.board)
+
   } // end of renderWolrd function.
 
   clearAllIntervals(){
@@ -161,14 +162,16 @@ class CanvasDrawing extends Component {
   shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
        let j = Math.floor(Math.random() * (i + 1));
-       // debugger
        [array[i], array[j]] = [array[j], array[i]]
     }
-    // console.log(array);
     return array
   }
 
   nextPiece() {
+    if (this.randomPiece.length === 0) {
+      this.randomPiece = [0,1,2,3,4,5,6]
+      this.shuffle(this.randomPiece)
+    }
     let nextpiece = this.randomPiece[this.randomPiece.length - 1]
     if (nextpiece !== undefined) {
       this.setState({
@@ -178,20 +181,14 @@ class CanvasDrawing extends Component {
   }
 
   newShape() {
-    if (this.randomPiece.length === 0) {
-      this.randomPiece = [0,1,2,3,4,5,6]
-      this.shuffle(this.randomPiece)
-      // console.log(this.randomPiece)
-    }
-    // console.log(this.randomPiece)
-    let random = this.randomPiece.pop()
+    let random = this.randomPiece[this.randomPiece.length - 1]
+    let removePiece = this.randomPiece.pop();
     let shape = tetromino[random]; // random for color filling
 
     this.currentShape = [];
     for (let y = 0; y < 4; ++y) {
         this.currentShape[y] = [];
         for (let x = 0; x < 4; ++x) {
-          // console.log('currentshape', this.currentShape)
             let i = 4 * y + x;
             if (typeof shape[i] != undefined && shape[i]) {
                 this.currentShape[y][x] = random + 1;
@@ -199,10 +196,9 @@ class CanvasDrawing extends Component {
                 this.currentShape[y][x] = 0;
             }
         }
-        // console.log(shape);
-        // debugger
-    }
-    // console.log(currenst);
+
+    } // end of first for loop "y"
+
     // new tetromino starts to move
     this.nextPiece()
     this.freezed = false;
@@ -349,7 +345,6 @@ class CanvasDrawing extends Component {
   }
 
   keyPress = (key) => {
-    // console.log('hello');
     switch (key) {
       case 'left':
           if (this.valid(-1)) {
@@ -407,6 +402,7 @@ class CanvasDrawing extends Component {
     }/*,() => console.log(this.state)*/)
     this.intervalRender = setInterval(this.renderWorld, 30);
     this.clearBoard();
+    this.shuffle(this.randomPiece)
     this.newShape();
     this.gameOver = false;
     this.interval = setInterval(this.canMove, this.fallspeed);
@@ -457,7 +453,7 @@ class CanvasDrawing extends Component {
   render() {
     return (
       <React.Fragment>
-        <ScoreMenu state={this.state} appState={this.props.state} drawBlock={this.drawBlock}/>
+        <ScoreMenu state={this.state} appState={this.props.state} drawBlock={this.drawBlock} randomPiece={this.randomPiece}/>
         <div className="tetris" onKeyDown={(e) => console.log(e.key)}>
           <div className="top-score">
             <ul id="top-score-list">

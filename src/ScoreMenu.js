@@ -3,11 +3,6 @@ import { tetromino, colors, HEIGHT_WIDTH, NEXTSHAPE_SIZE} from "./gameAssets";
 
 
 class ScoreMenu extends Component {
-  constructor(props) {
-    super(props);
-    this.intervalRender = null;
-    // console.log(this.props.state.nextpiece)
-  }
 
   state = {
     context: null,
@@ -17,23 +12,10 @@ class ScoreMenu extends Component {
   componentDidMount() {
     const context = this.refs.canvas.getContext('2d')
     this.setState({context: context})
-    context.fillStyle = "cyan"
-    // context.fillRect(85, 30, 30, 30)
-    // context.fillRect(85, 55, 30, 30)
-    // context.fillRect(85, 90, 30, 30)
-    // context.fillRect(85, 125, 30, 30)
-    // requestAnimationFrame(()=>{this.update()})
-    console.log('in componentDidMount')
-    // this.drawNextTetromino()
   }
 
   componentDidUpdate() {
     this.nextTetromino()
-  }
-
-  drawNextTetromino = ( x, y) => {
-    let context = this.state.context
-    context.fillRect()
   }
 
   nextTetromino = () => {
@@ -75,12 +57,12 @@ class ScoreMenu extends Component {
     context.clearRect(0,0,200,200)
 
     let shape = tetromino[this.props.state.nextpiece]
+    // console.log(shape, 'random piece' ,this.props.randomPiece)
 
     this.nextShape = [];
     for (let y = 0; y < 4; ++y) {
         this.nextShape[y] = [];
         for (let x = 0; x < 4; ++x) {
-          // console.log('currentshape', this.nextShape)
             let i = 4 * y + x;
             if (typeof shape[i] != undefined && shape[i]) {
                 this.nextShape[y][x] = 0 + 1
@@ -96,10 +78,11 @@ class ScoreMenu extends Component {
     context.strokeStyle = 'black';
     for (let y = 0; y < 4; ++y) {
       for (let x = 0; x < 4; ++x) {
-        // console.log('testing', this.nextShape)
         if(this.nextShape[y][x]) {
           this.updateColor(this.props.state.nextpiece)
+          // drawing the pieces
           context.fillRect(NEXTSHAPE_SIZE * x + 40, NEXTSHAPE_SIZE * y + 50, HEIGHT_WIDTH, HEIGHT_WIDTH)
+          //tetrominos have a black outline - draws outline
           context.strokeRect(NEXTSHAPE_SIZE * x + 40, NEXTSHAPE_SIZE * y + 50,  HEIGHT_WIDTH, HEIGHT_WIDTH)
         }
       }
@@ -107,12 +90,6 @@ class ScoreMenu extends Component {
   }
 
 
-
-  // update = () => {
-  //   if(this.props.state.playing) {
-  //   }
-  //   requestAnimationFrame(() => {this.update()})
-  // }
 
   render() {
     return (
