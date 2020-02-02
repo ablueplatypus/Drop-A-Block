@@ -28,6 +28,7 @@ class CanvasDrawing extends Component {
     loopMusic: true,
     level: 1,
     filledRow: false,
+    gamePaused: false,
     nextpiece: null,
     playing: false,
     score: 0,
@@ -46,6 +47,13 @@ class CanvasDrawing extends Component {
     // this.state.input.bindKeys();
     const context = this.refs.canvas.getContext('2d')
     this.setState({context: context})
+    this.setKeys()
+    this.props.getUserData()  // fetching for the stat data.
+    this.passUpStats()  // passing up state of scores to App.
+    requestAnimationFrame(()=>{this.update()})
+  }
+
+  setKeys = () => {
     document.onkeydown = (e) => {
       let keys = {
           37: 'left',
@@ -62,26 +70,42 @@ class CanvasDrawing extends Component {
       };
       if (typeof keys[e.keyCode] != undefined) {
         // console.log(typeof keys[e.keyCode]);
-          if (this.state.playing)
+          if (this.state.playing) {
             this.keyPress(keys[e.keyCode]);
-          // render();
+          }
       }
-    } // end of key press handler
-
-    this.props.getUserData()  // fetching for the stat data.
-    this.passUpStats()  // passing up state of scores to App.
-    requestAnimationFrame(()=>{this.update()})
+    }
   }
+
+
 
   update = () => {
     // console.log(this.state.input.pressedKeys)
-    if (this.state.startGame) {
-      // this.keyPress()
-    }
     // console.log(this.board)
     requestAnimationFrame(() => {this.update()})
   }
 
+
+  componentDidUpdate() {
+    // listen for a key press
+    document.onkeydown = (e) => {
+      // if the state of the game is paused
+      if (this.state.gamePaused) {
+        e.preventDefault()
+        //no keys pressed are defined and Keypress function is not called
+        if(e.keyCode === 80) {
+          // if you press the "p" key (keycode 80)
+          // set the pause state from true to false - oppesit of what is currently is
+          this.setState({gamePaused: !this.state.gamePaused})
+          // run the pauseGame function
+          this.pauseGame()
+        }
+      } else {
+        // if the game is not paused set the keys.
+        this.setKeys()
+      }
+    }
+  }
   // fix Grid maybe implement?
   // drawBoard = () => {
   //   let context = this.state.context
@@ -395,7 +419,8 @@ class CanvasDrawing extends Component {
           break;
       case 'pause':
         this.pauseGame()
-        break;
+        this.setState({gamePaused: !this.state.gamePaused})
+          break;
 
     }
   }
@@ -480,7 +505,12 @@ class CanvasDrawing extends Component {
   render() {
     return (
       <React.Fragment>
-        <ScoreMenu state={this.state} appState={this.props.state} drawBlock={this.drawBlock} randomPiece={this.randomPiece}/>
+        <ScoreMenu
+        state={this.state}
+        appState={this.props.state}
+        pauseGame={this.pauseGame}
+        randomPiece={this.randomPiece}
+        />
         <div className="tetris" onKeyDown={(e) => console.log(e.key)}>
           <div className="top-score">
             <ul id="top-score-list">

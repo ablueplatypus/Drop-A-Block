@@ -42,7 +42,6 @@ class ScoreMenu extends Component {
         return context.fillStyle = colors[5]
       case 6:
         return context.fillStyle = colors[6]
-        break;
       default:
         return "something went wrong"
     }
@@ -102,6 +101,7 @@ class ScoreMenu extends Component {
                 <li>WASD or Arrow keys to move</li>
                 <li>Up Arrow key to Rotate or Enter</li>
                 <li>Space to drop peice</li>
+                <li>"P" to pause the game</li>
               </ul>
           <p className="small-margin">Score:
             <span id="score"> {this.props.state.score}</span>
