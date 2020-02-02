@@ -18,6 +18,7 @@ class CanvasDrawing extends Component {
     this.currentY = null;
     this.freezed = null;
     this.fallspeed = 1000;
+    this.gamePaused = false;
     this.randomPiece = [0,1,2,3,4,5,6]
   } // end of contructor.
 
@@ -29,7 +30,6 @@ class CanvasDrawing extends Component {
     filledRow: false,
     nextpiece: null,
     playing: false,
-    pause: false,
     score: 0,
     statData: [],
     worldWidth: 300,
@@ -56,8 +56,9 @@ class CanvasDrawing extends Component {
           65: 'left',
           68: 'right',
           87: 'rotate',
-          83: 'drop',
-          13: 'rotate'
+          83: 'down',
+          13: 'rotate',
+          80: 'pause'
       };
       if (typeof keys[e.keyCode] != undefined) {
         // console.log(typeof keys[e.keyCode]);
@@ -77,6 +78,7 @@ class CanvasDrawing extends Component {
     if (this.state.startGame) {
       // this.keyPress()
     }
+    // console.log(this.board)
     requestAnimationFrame(() => {this.update()})
   }
 
@@ -312,7 +314,6 @@ class CanvasDrawing extends Component {
 
   }
 
-
   canMove = () => {
     if (this.valid(0, 1)) {
         ++this.currentY;
@@ -325,9 +326,28 @@ class CanvasDrawing extends Component {
             this.clearAllIntervals();
             return false;
         }
-        this.newShape();
+        if(!this.state.pause) {
+          this.newShape();
+        }
     }
   }
+
+  pauseGame() {
+    if(!this.gamePaused) {
+      this.gamePaused = true;
+      clearInterval(this.interval)
+      this.props.playPauseSound()
+      // console.log('first time', this.interval, this.gamePaused)
+    } else if (this.gamePaused) {
+      this.props.play()
+      this.gamePaused = false;
+      // console.log('second time', this.interval)
+      this.interval = setInterval(this.canMove, this.fallspeed)
+    }
+
+  }
+
+
 
   freeze() {
   for (let y = 0; y < 4; ++y) { // y is the loop for each row in the board
@@ -362,7 +382,7 @@ class CanvasDrawing extends Component {
           }
           break;
       case 'rotate':
-          let rotated = this.rotate(this.currentShapecurrentShape);
+          let rotated = this.rotate(this.currentShape);
           if (this.valid(0, 0, rotated)) {
               this.currentShape = rotated;
           }
@@ -373,6 +393,9 @@ class CanvasDrawing extends Component {
           }
           this.canMove();
           break;
+      case 'pause':
+        this.pauseGame()
+        break;
 
     }
   }
@@ -400,14 +423,17 @@ class CanvasDrawing extends Component {
       score: 0,
       lineCnt: 0
     }/*,() => console.log(this.state)*/)
-    this.intervalRender = setInterval(this.renderWorld, 30);
     this.clearBoard();
     this.shuffle(this.randomPiece)
     this.newShape();
     this.gameOver = false;
-    this.interval = setInterval(this.canMove, this.fallspeed);
     // console.log(this.intervalRender, this.interval);
     // console.log(this.board);
+  }
+
+  game = () => {
+      this.intervalRender = setInterval(this.renderWorld, 30);
+      this.interval = setInterval(this.canMove, this.fallspeed);
   }
 
 
@@ -415,6 +441,7 @@ class CanvasDrawing extends Component {
   playGameHandler = () => {
     // console.log('in playGameHandler');
     this.startGame();
+    this.game();
     this.props.play()
     document.querySelector('.gameOver').style.visibility = "hidden"
     document.querySelector('.initial-input').style.visibility = "hidden"
@@ -466,7 +493,7 @@ class CanvasDrawing extends Component {
           <canvas id="world" ref="canvas" width={this.state.worldWidth} height={this.state.worldHeight}></canvas>
           <button id="playbutton" onClick={() => this.playGameHandler()}>Play Drop A Block!</button>
           <button className="soundbuttons" onClick={() => this.props.play()}>Start Music</button>
-          <button className="soundbuttons" onClick={(e) => this.props.pause(e)}>Pause Music</button>
+          <button className="soundbuttons" onClick={(e) => this.props.pauseMusic(e)}>Pause Music</button>
         </div>
       </React.Fragment>
     );

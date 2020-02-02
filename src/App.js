@@ -10,9 +10,11 @@ class App extends Component {
   this.lineClear = "http://www.vertigogaming.org/downloads/svencoop/sound/sc_tetris/clear.wav"
   this.piecePlaced = "http://www.bndclan.com/Bend3r/Bend3r/hl-content/cstrike/sound/tetris/fall.wav"
   this.gameOverSound = "http://mattersofgrey.com/audio/superMarioBros-gameOver.mp3"
+  this.pauseSound = "http://www.mariomayhem.com/downloads/sounds/super_mario_bros/smb_pause.wav"
   this.gameOverAudio = new Audio(this.gameOverSound)
   this.placedAudio = new Audio (this.piecePlaced)
   this.lineClearAudio = new Audio(this.lineClear)
+  this.pauseAudio = new Audio(this.pauseSound)
   this.audio = new Audio(this.url)
 
   }
@@ -67,6 +69,11 @@ class App extends Component {
 
   playLineClear = () => {
     this.lineClearAudio.play()
+  }
+
+  playPauseSound = () => {
+    this.pauseAudio.play()
+    this.audio.pause()
   }
 
   pauseTheme = (e) => {
@@ -143,10 +150,11 @@ class App extends Component {
           <CanvasDrawing
             state={this.state}
             play={this.play}
-            pause={this.pauseTheme}
+            pauseMusic={this.pauseTheme}
             stopMusic={this.stop}
             lineClearSound={this.playLineClear}
             playFallSound={this.playFall}
+            playPauseSound={this.playPauseSound}
             gameOverSound={this.gameOverSoundHandler}
             handleKeyPress={this.handleKeyPress}
             getStats={this.getStats}
