@@ -356,17 +356,18 @@ class CanvasDrawing extends Component {
   }
 
   pauseGame() {
+    // if the game is paused - gamePause starts out as false
     if(!this.gamePaused) {
       this.gamePaused = true;
       clearInterval(this.interval)
       this.props.playPauseSound()
+      //show pause text
       document.querySelector('#pause').style.visibility = "visible"
-      // console.log('first time', this.interval, this.gamePaused)
     } else if (this.gamePaused) {
       this.props.play()
       this.gamePaused = false;
+      //hide pause text
       document.querySelector('#pause').style.visibility = "hidden"
-      // console.log('second time', this.interval)
       this.interval = setInterval(this.canMove, this.fallspeed)
     }
 

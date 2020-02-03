@@ -239,3 +239,25 @@
   color: red;
   font-weight: 700;
 }
+
+@media screen and (max-width: 768px) {
+
+  .small-margin {
+    margin: 12px 0px 10px;
+  }
+
+  #list{
+    margin-bottom: 0px;
+  }
+
+  #click-to-play {
+    margin-bottom: 0px;
+  }
+
+  .top-score {
+    right: 15px;
+  }
+
+
+
+}
