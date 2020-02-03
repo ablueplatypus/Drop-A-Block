@@ -141,6 +141,7 @@
 
 .pauseBtn {
   cursor: pointer;
+  color: black;
   border-radius: 10px;
   text-align: center;
   font-family: 'Press Start 2p', Arial, sans-serif;

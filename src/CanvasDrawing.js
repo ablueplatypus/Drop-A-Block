@@ -44,10 +44,10 @@ class CanvasDrawing extends Component {
   // the first thing this will do
 
   componentDidMount() {
-    // this.state.input.bindKeys();
     const context = this.refs.canvas.getContext('2d')
     this.setState({context: context})
     this.setKeys()
+    document.querySelector('.pauseBtn').disabled = true;
     this.props.getUserData()  // fetching for the stat data.
     this.passUpStats()  // passing up state of scores to App.
     requestAnimationFrame(()=>{this.update()})
@@ -298,6 +298,7 @@ class CanvasDrawing extends Component {
                         document.querySelector('#playbutton').disabled = false;
                         document.querySelector('.gameOver').style.visibility = "visible"
                         document.querySelector('.initial-input').style.visibility = "visible"
+                        document.querySelector('.pauseBtn').disabled = true;
                     }
                     return false;
                 }
@@ -511,6 +512,7 @@ class CanvasDrawing extends Component {
     document.querySelector('.initial-input').style.visibility = "hidden"
     document.querySelector('.leaderboard').style.visibility = "hidden"
     document.querySelector('#playbutton').disabled = true
+    document.querySelector('.pauseBtn').disabled = false;
   }
 /**********************************************************************/
 
