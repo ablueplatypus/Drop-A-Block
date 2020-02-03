@@ -208,7 +208,7 @@ class CanvasDrawing extends Component {
 
   newShape() {
     let random = this.randomPiece[this.randomPiece.length - 1]
-    let removePiece = this.randomPiece.pop();
+    this.randomPiece.pop();
     let shape = tetromino[random]; // random for color filling
 
     this.currentShape = [];
@@ -224,7 +224,6 @@ class CanvasDrawing extends Component {
         }
 
     } // end of first for loop "y"
-
     // new tetromino starts to move
     this.nextPiece()
     this.freezed = false;
@@ -292,7 +291,7 @@ class CanvasDrawing extends Component {
   }
 
   clearLines() {
-    let context = this.state.context
+    // let context = this.state.context
     let numLinesCleared = 0
     for (let y = this.rows - 1; y >= 0; --y) {
         let rowFilled = true;
@@ -361,10 +360,12 @@ class CanvasDrawing extends Component {
       this.gamePaused = true;
       clearInterval(this.interval)
       this.props.playPauseSound()
+      document.querySelector('#pause').style.visibility = "visible"
       // console.log('first time', this.interval, this.gamePaused)
     } else if (this.gamePaused) {
       this.props.play()
       this.gamePaused = false;
+      document.querySelector('#pause').style.visibility = "hidden"
       // console.log('second time', this.interval)
       this.interval = setInterval(this.canMove, this.fallspeed)
     }
@@ -421,6 +422,8 @@ class CanvasDrawing extends Component {
         this.pauseGame()
         this.setState({gamePaused: !this.state.gamePaused})
           break;
+          default:
+          return "something went wrong"
 
     }
   }
@@ -520,6 +523,9 @@ class CanvasDrawing extends Component {
             </ul>
           </div>
           <Leaderboard scores={this.topTen() ? this.topTen() : null} />
+          <div id="pause">
+            <p>Paused</p>
+          </div>
           <canvas id="world" ref="canvas" width={this.state.worldWidth} height={this.state.worldHeight}></canvas>
           <button id="playbutton" onClick={() => this.playGameHandler()}>Play Drop A Block!</button>
           <button className="soundbuttons" onClick={() => this.props.play()}>Start Music</button>

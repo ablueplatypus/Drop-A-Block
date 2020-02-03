@@ -49,7 +49,6 @@ class ScoreMenu extends Component {
 
 
   renderNextTetromino = () => {
-
     // console.log('nextpiece', this.props.state.nextpiece, 'tetris' , tetromino);
     let context = this.state.context
     context.save()
