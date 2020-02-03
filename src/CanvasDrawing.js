@@ -78,6 +78,40 @@ class CanvasDrawing extends Component {
   }
 
 
+  handleStart = (e) => {
+    e.persist()
+    let touch = e.touches[0]
+    if (this.state.playing) {
+      if(touch.screenX < 140) {
+        // move left
+        if (this.valid(-1)) {
+            --this.currentX;
+          }
+        }
+
+        if(touch.screenX > 200) {
+          //move right
+          if (this.valid(1)) {
+            ++this.currentX;
+          }
+        }
+
+        if(touch.screenY > 470) {
+          // move down
+          if (this.valid(0, 1)) {
+            ++this.currentY;
+          }
+        }
+
+        if(touch.screenY < 270) {
+          // rotate
+          let rotated = this.rotate(this.currentShape);
+          if (this.valid(0, 0, rotated)) {
+            this.currentShape = rotated;
+          }
+        }
+    }
+  }
 
   update = () => {
     // console.log(this.state.input.pressedKeys)
@@ -225,6 +259,7 @@ class CanvasDrawing extends Component {
 
     } // end of first for loop "y"
     // new tetromino starts to move
+    // console.log(this.randomPiece)
     this.nextPiece()
     this.freezed = false;
     // position where the shape will spawn on canvas
@@ -256,7 +291,6 @@ class CanvasDrawing extends Component {
                         this.setState ({
                           playing: false
                         })
-                        // console.log(this.state.context);
                         // music can stop here.
                         context.globalAlpha = .5
                         context.fillRect(0,0,300,600)
@@ -527,7 +561,11 @@ class CanvasDrawing extends Component {
           <div id="pause">
             <p>Paused</p>
           </div>
-          <canvas id="world" ref="canvas" width={this.state.worldWidth} height={this.state.worldHeight}></canvas>
+          <canvas id="world" ref="canvas"
+          width={this.state.worldWidth}
+          height={this.state.worldHeight}
+          onTouchStart={this.handleStart}>
+          </canvas>
           <button id="playbutton" onClick={() => this.playGameHandler()}>Play Drop A Block!</button>
           <button className="soundbuttons" onClick={() => this.props.play()}>Start Music</button>
           <button className="soundbuttons" onClick={(e) => this.props.pauseMusic(e)}>Pause Music</button>
