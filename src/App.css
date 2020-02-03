@@ -112,6 +112,7 @@
 
 .soundbuttons {
   cursor: pointer;
+  border-radius: 10px;
   font-family: 'Press Start 2p', Arial, sans-serif;
   font-size: 12px;
   margin-top: 5px;
@@ -137,6 +138,24 @@
   order: 1;
   width: 320px;
 }
+
+.pauseBtn {
+  cursor: pointer;
+  border-radius: 10px;
+  text-align: center;
+  font-family: 'Press Start 2p', Arial, sans-serif;
+  font-size: 13px;
+  margin-top: 12px;
+  margin-left: 77px;
+  padding: 5px 8px 5px;
+}
+
+.pauseBtn:hover {
+  color: white;
+  background-color: black;
+}
+
+
 
 #click-to-play {
   font-weight: 500;
@@ -241,6 +260,10 @@
 }
 
 @media screen and (max-width: 768px) {
+
+  .App {
+    touch-action: manipulation;
+  }
 
   .small-margin {
     margin: 12px 0px 10px;

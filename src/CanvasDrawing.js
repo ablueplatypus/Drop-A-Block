@@ -78,7 +78,7 @@ class CanvasDrawing extends Component {
   }
 
 
-  handleStart = (e) => {
+  handleTouch = (e) => {
     e.persist()
     let touch = e.touches[0]
     if (this.state.playing) {
@@ -395,6 +395,7 @@ class CanvasDrawing extends Component {
       this.gamePaused = true;
       clearInterval(this.interval)
       this.props.playPauseSound()
+
       //show pause text
       document.querySelector('#pause').style.visibility = "visible"
     } else if (this.gamePaused) {
@@ -422,6 +423,11 @@ class CanvasDrawing extends Component {
   }
     this.freezed = true;
     this.props.playFallSound()
+  }
+
+  clickPause = () => {
+      this.pauseGame()
+      this.setState({gamePaused: !this.state.gamePaused})
   }
 
   keyPress = (key) => {
@@ -454,8 +460,7 @@ class CanvasDrawing extends Component {
           this.canMove();
           break;
       case 'pause':
-        this.pauseGame()
-        this.setState({gamePaused: !this.state.gamePaused})
+        this.clickPause();
           break;
           default:
           return "something went wrong"
@@ -480,7 +485,6 @@ class CanvasDrawing extends Component {
   startGame = () => {
     // this function start the game and allow the board to be created
     // it will also fire other funcations that will allow the tetrominos to start falling.
-    // console.log('In Start Game', this.state.startGame);
     this.setState({
       playing: true,
       score: 0,
@@ -490,8 +494,6 @@ class CanvasDrawing extends Component {
     this.shuffle(this.randomPiece)
     this.newShape();
     this.gameOver = false;
-    // console.log(this.intervalRender, this.interval);
-    // console.log(this.board);
   }
 
   game = () => {
@@ -502,7 +504,6 @@ class CanvasDrawing extends Component {
 
 /************************* Click Handler ********************************/
   playGameHandler = () => {
-    // console.log('in playGameHandler');
     this.startGame();
     this.game();
     this.props.play()
@@ -549,7 +550,7 @@ class CanvasDrawing extends Component {
         pauseGame={this.pauseGame}
         randomPiece={this.randomPiece}
         />
-        <div className="tetris" onKeyDown={(e) => console.log(e.key)}>
+        <div className="tetris">
           <div className="top-score">
             <ul id="top-score-list">
               <li>Initial:<span id="initials">{this.topScore() ? this.topScore().initials : '###'}</span></li>
@@ -564,11 +565,12 @@ class CanvasDrawing extends Component {
           <canvas id="world" ref="canvas"
           width={this.state.worldWidth}
           height={this.state.worldHeight}
-          onTouchStart={this.handleStart}>
+          onTouchStart={this.handleTouch}>
           </canvas>
           <button id="playbutton" onClick={() => this.playGameHandler()}>Play Drop A Block!</button>
           <button className="soundbuttons" onClick={() => this.props.play()}>Start Music</button>
           <button className="soundbuttons" onClick={(e) => this.props.pauseMusic(e)}>Pause Music</button>
+          <button className="pauseBtn" onClick={() => this.clickPause()}>Pause Game</button>
         </div>
       </React.Fragment>
     );
