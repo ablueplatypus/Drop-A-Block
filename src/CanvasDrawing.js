@@ -81,7 +81,7 @@ class CanvasDrawing extends Component {
   handleTouch = (e) => {
     e.persist()
     let touch = e.touches[0]
-    if (this.state.playing) {
+    if (this.state.playing && !this.state.gamePaused) {
       if(touch.screenX < 140) {
         // move left
         if (this.valid(-1)) {
