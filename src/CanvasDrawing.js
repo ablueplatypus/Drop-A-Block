@@ -492,6 +492,7 @@ class CanvasDrawing extends Component {
       lineCnt: 0
     }/*,() => console.log(this.state)*/)
     this.clearBoard();
+    this.randomPiece = [0,1,2,3,4,5,6]
     this.shuffle(this.randomPiece)
     this.newShape();
     this.gameOver = false;
