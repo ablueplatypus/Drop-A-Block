@@ -55,6 +55,7 @@ class CanvasDrawing extends Component {
 
   setKeys = () => {
     document.onkeydown = (e) => {
+      e.preventDefault()
       let keys = {
           37: 'left',
           39: 'right',
